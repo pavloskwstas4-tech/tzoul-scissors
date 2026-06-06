@@ -276,7 +276,7 @@ export default function BookingModal() {
                     )}
 
                     {step === 1 && (
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4" data-testid="step-barber">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5" data-testid="step-barber">
                         {eligibleBarbers.length === 0 && (
                           <div className="col-span-full p-6 rounded-2xl bg-[#F5F5F7] border border-black/[0.06] text-[#86868B] text-sm" data-testid="no-eligible-barbers">
                             No barber currently offers this service. Please go back and choose another service.
@@ -289,21 +289,20 @@ export default function BookingModal() {
                               key={b.id}
                               data-testid={`pick-barber-${b.id}`}
                               onClick={() => setBarberId(b.id)}
-                              className={`text-left rounded-2xl overflow-hidden transition-all duration-200 ${
+                              className={`flex items-center gap-4 text-left rounded-2xl p-3.5 transition-all duration-200 ${
                                 sel
-                                  ? "ring-2 ring-[#1D1D1F] shadow-[0_8px_24px_rgba(0,0,0,0.12)] scale-[1.02]"
-                                  : "hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] border border-black/[0.06]"
+                                  ? "bg-[#1D1D1F] shadow-[0_6px_20px_rgba(0,0,0,0.14)] scale-[1.02]"
+                                  : "bg-[#F5F5F7] hover:bg-white hover:shadow-[0_4px_16px_rgba(0,0,0,0.07)] border border-transparent hover:border-black/[0.06]"
                               }`}
                             >
-                              <div className="aspect-[3/4] overflow-hidden bg-[#ECECEE]">
-                                <img src={b.image} alt={b.name} className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" />
+                              <div className="shrink-0 w-14 h-14 rounded-full overflow-hidden bg-[#ECECEE] ring-2 ring-white/30">
+                                <img src={b.image} alt={b.name} className="w-full h-full object-cover" />
                               </div>
-                              <div className={`p-3 transition-colors ${sel ? "bg-[#1D1D1F] text-white" : "bg-white"}`}>
-                                <div className="font-display uppercase text-sm leading-tight">{b.name}</div>
-                                <div className={`font-mono text-[0.58rem] uppercase tracking-wider mt-1 ${sel ? "text-white/55" : "text-[#A1A1A6]"}`}>
-                                  {b.role}
-                                </div>
+                              <div className="flex-1 min-w-0">
+                                <div className={`font-display uppercase text-sm leading-tight truncate ${sel ? "text-white" : "text-[#1D1D1F]"}`}>{b.name}</div>
+                                <div className={`font-mono text-[0.58rem] uppercase tracking-wider mt-0.5 ${sel ? "text-white/55" : "text-[#A1A1A6]"}`}>{b.role}</div>
                               </div>
+                              {sel && <Check size={14} className="shrink-0 text-white/70" />}
                             </button>
                           );
                         })}
