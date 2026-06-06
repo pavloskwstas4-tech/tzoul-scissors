@@ -1,23 +1,25 @@
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=Archivo:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ---------- Palette ----------
-   cream:      #F5EFE7
-   ink:        #0A0A0A
-   red:        #E63329
+   sky-blue:   #38BDF8
+   orange:     #F97316
+   ink:        #0F172A
+   bg:         #F8FAFC
+   surface-alt:#E0F2FE
 */
 
 html, body {
-    background: #F5EFE7;
-    color: #0A0A0A;
+    background: #F8FAFC;
+    color: #0F172A;
 }
 
 body {
     margin: 0;
-    font-family: 'Archivo', 'Helvetica Neue', Helvetica, system-ui, sans-serif;
+    font-family: 'Manrope', 'Helvetica Neue', system-ui, sans-serif;
     font-weight: 500;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -25,14 +27,13 @@ body {
     letter-spacing: -0.005em;
 }
 
-::selection { background: #E63329; color: #fff; }
+::selection { background: #38BDF8; color: #0F172A; }
 
 /* ---------- Fonts ---------- */
-.font-display    { font-family: 'Anton', 'Archivo Black', 'Helvetica Neue', sans-serif; letter-spacing: -0.005em; }
-.font-display-tight { font-family: 'Archivo Black', 'Anton', sans-serif; letter-spacing: -0.02em; }
-.font-body       { font-family: 'Archivo', system-ui, sans-serif; }
+.font-display    { font-family: 'Outfit', 'Helvetica Neue', sans-serif; font-weight: 800; letter-spacing: -0.02em; }
+.font-body       { font-family: 'Manrope', system-ui, sans-serif; }
 .font-mono       { font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace; }
-.font-heritage   { font-family: 'Cormorant Garamond', 'Garamond', 'Times New Roman', serif; }
+.font-heritage   { font-family: 'Georgia', 'Times New Roman', serif; }
 
 /* ---------- Type utilities ---------- */
 .eyebrow {
@@ -40,46 +41,97 @@ body {
     font-size: .64rem;
     letter-spacing: .14em;
     text-transform: uppercase;
-    color: rgba(10,10,10,.55);
+    color: rgba(15,23,42,.50);
     font-weight: 400;
 }
-.eyebrow-inverse { color: rgba(255,255,255,.6); }
+.eyebrow-blue { color: #0284C7; }
 
 .title-massive {
-    font-family: 'Anton', 'Archivo Black', sans-serif;
-    font-weight: 400;
-    line-height: 0.88;
-    letter-spacing: -0.01em;
+    font-family: 'Outfit', 'Helvetica Neue', sans-serif;
+    font-weight: 900;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
     text-transform: uppercase;
 }
 
-/* ---------- Hard borders ---------- */
-.border-ink     { border-color: #0A0A0A; }
-.border-hair    { border-color: rgba(10,10,10,.18); }
-.border-hair-inverse { border-color: rgba(255,255,255,.18); }
+/* ---------- Neo-brutalist card ---------- */
+.neo-card {
+    background: #ffffff;
+    border: 2px solid #0F172A;
+    box-shadow: 4px 4px 0px #0F172A;
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+.neo-card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #0F172A;
+}
 
 /* ---------- Buttons ---------- */
-.btn-red, .btn-ink, .btn-outline, .btn-outline-light {
-    padding: 0.85rem 1.25rem;
-    font-family: 'Archivo', sans-serif;
-    font-weight: 800;
-    font-size: 0.74rem;
-    letter-spacing: 0.14em;
+.btn-orange {
+    padding: 0.85rem 1.5rem;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    transition: background .25s, color .25s, border-color .25s;
+    background: #F97316;
+    color: #fff;
+    border: 2px solid #0F172A;
+    box-shadow: 4px 4px 0px #0F172A;
+    transition: transform .2s ease, box-shadow .2s ease;
     display: inline-flex;
     align-items: center;
     gap: 0.55rem;
     line-height: 1;
+    border-radius: 9999px;
 }
-.btn-red { background: #E63329; color: #fff; border: 2px solid #E63329; }
-.btn-red:hover { background: #0A0A0A; border-color: #0A0A0A; color: #fff; }
-.btn-ink { background: #0A0A0A; color: #fff; border: 2px solid #0A0A0A; }
-.btn-ink:hover { background: transparent; color: #0A0A0A; }
-.btn-outline { background: transparent; color: #0A0A0A; border: 2px solid #0A0A0A; }
-.btn-outline:hover { background: #0A0A0A; color: #fff; }
-.btn-outline-light { background: transparent; color: #fff; border: 2px solid #fff; }
-.btn-outline-light:hover { background: #fff; color: #0A0A0A; }
+.btn-orange:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #0F172A;
+    background: #EA580C;
+}
+
+.btn-blue {
+    padding: 0.85rem 1.5rem;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background: #38BDF8;
+    color: #0F172A;
+    border: 2px solid #0F172A;
+    box-shadow: 4px 4px 0px #0F172A;
+    transition: transform .2s ease, box-shadow .2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    line-height: 1;
+    border-radius: 9999px;
+}
+.btn-blue:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #0F172A;
+}
+
+.btn-ink {
+    padding: 0.85rem 1.5rem;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background: #0F172A;
+    color: #fff;
+    border: 2px solid #0F172A;
+    box-shadow: 4px 4px 0px rgba(0,0,0,0.3);
+    transition: transform .2s ease, box-shadow .2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    line-height: 1;
+    border-radius: 9999px;
+}
 
 /* ---------- Ticker tape ---------- */
 @keyframes marquee {
@@ -104,69 +156,50 @@ body {
     transform: translateY(0);
 }
 
-/* ---------- Service row ---------- */
-.svc-row { transition: background .2s ease, transform .2s ease; }
-.svc-row:hover { background: rgba(10,10,10,.04); }
-
-/* ---------- Gallery zoom + split frame ---------- */
+/* ---------- Gallery zoom ---------- */
 .tile { overflow: hidden; }
 .tile img { transition: transform 1s cubic-bezier(.2,.7,.2,1); }
 .tile:hover img { transform: scale(1.06); }
 
-.split-frame { isolation: isolate; }
-.split-frame .sf-slat {
-    position: absolute; left: 0; right: 0;
-    background: #E63329;
-    pointer-events: none;
-    transition: transform .6s cubic-bezier(.76,0,.24,1);
-    z-index: 2;
-}
-/* Slats hidden by default off-screen, sweep IN on hover then OUT on leave for a quick reveal flash */
-.split-frame .slat-top    { top: 0;    height: 50%; transform: translateY(-100%); }
-.split-frame .slat-bottom { bottom: 0; height: 50%; transform: translateY(100%);  }
-.split-frame:hover .slat-top    { transform: translateY(0); animation: sweepTop 0.9s cubic-bezier(.76,0,.24,1) forwards; }
-.split-frame:hover .slat-bottom { transform: translateY(0); animation: sweepBottom 0.9s cubic-bezier(.76,0,.24,1) forwards; }
-@keyframes sweepTop    { 0% { transform: translateY(-100%); } 45% { transform: translateY(0); } 100% { transform: translateY(-100%); } }
-@keyframes sweepBottom { 0% { transform: translateY(100%);  } 45% { transform: translateY(0); } 100% { transform: translateY(100%);  } }
-
 /* ---------- Map grayscale ---------- */
-.map-grayscale iframe { filter: grayscale(100%) contrast(1.02); }
+.map-grayscale iframe { filter: grayscale(30%) contrast(1.02); }
 
 /* ---------- Calendar ---------- */
-.rdp { color: #0A0A0A; }
+.rdp { color: #0F172A; }
 .rdp-day_selected, .rdp-day_selected:hover, .rdp-day_selected:focus {
-    background-color: #E63329 !important;
-    color: #ffffff !important;
-    border-radius: 0 !important;
+    background-color: #38BDF8 !important;
+    color: #0F172A !important;
+    border-radius: 8px !important;
+    font-weight: 700;
 }
-.rdp-button { border-radius: 0 !important; }
+.rdp-button { border-radius: 8px !important; }
 .rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
-    background-color: rgba(10,10,10,.08) !important;
+    background-color: #E0F2FE !important;
 }
 
-/* ---------- Shadcn vars ---------- */
+/* ---------- Shadcn CSS vars ---------- */
 @layer base {
     :root {
-        --background: 36 38% 93%;
-        --foreground: 0 0% 4%;
-        --card: 36 38% 93%;
-        --card-foreground: 0 0% 4%;
-        --popover: 36 38% 93%;
-        --popover-foreground: 0 0% 4%;
-        --primary: 0 0% 4%;
-        --primary-foreground: 36 38% 93%;
-        --secondary: 0 0% 90%;
-        --secondary-foreground: 0 0% 4%;
-        --muted: 0 0% 85%;
-        --muted-foreground: 0 0% 30%;
-        --accent: 4 79% 53%;
-        --accent-foreground: 0 0% 100%;
-        --destructive: 4 79% 53%;
+        --background: 210 40% 98%;
+        --foreground: 222 47% 11%;
+        --card: 0 0% 100%;
+        --card-foreground: 222 47% 11%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 222 47% 11%;
+        --primary: 199 89% 48%;
+        --primary-foreground: 0 0% 100%;
+        --secondary: 210 40% 94%;
+        --secondary-foreground: 222 47% 11%;
+        --muted: 210 40% 94%;
+        --muted-foreground: 215 25% 40%;
+        --accent: 199 89% 93%;
+        --accent-foreground: 222 47% 11%;
+        --destructive: 0 84% 60%;
         --destructive-foreground: 0 0% 100%;
-        --border: 0 0% 12%;
-        --input: 0 0% 12%;
-        --ring: 4 79% 53%;
-        --radius: 0rem;
+        --border: 214 32% 91%;
+        --input: 214 32% 91%;
+        --ring: 199 89% 48%;
+        --radius: 0.5rem;
     }
 }
 
@@ -178,23 +211,19 @@ body {
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
+/* link underline — blue */
 .link-underline { position: relative; }
 .link-underline::after {
     content: "";
     position: absolute;
     left: 0; right: 0; bottom: -3px;
     height: 2px;
-    background: #E63329;
+    background: #38BDF8;
     transform: scaleX(0);
     transform-origin: left center;
     transition: transform .35s ease;
 }
 .link-underline:hover::after, .link-underline.active::after { transform: scaleX(1); }
 
-/* ---------- Hero gradient slice ---------- */
-.hero-slice {
-    clip-path: polygon(40% 0, 100% 0, 100% 100%, 0% 100%);
-}
-
-/* scroll-margin for anchored sections so they land below sticky nav */
+/* scroll-margin for anchored sections */
 section[id] { scroll-margin-top: 80px; }

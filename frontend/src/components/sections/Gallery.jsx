@@ -12,14 +12,14 @@ const TILES = [
 
 export default function Gallery() {
   return (
-    <section id="gallery" data-testid="gallery-section" className="bg-[#0a0a0a] py-28 md:py-40 border-t hairline">
+    <section id="gallery" data-testid="gallery-section" className="bg-white py-28 md:py-40 border-t-2 border-[#0F172A]">
       <Reveal>
         <div className="max-w-[1500px] mx-auto px-6 md:px-10">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-14 reveal">
             <div>
               <p className="eyebrow">— Plates</p>
-              <h2 className="font-display text-5xl md:text-7xl tracking-tighter leading-[0.92] mt-3">
-                The <span className="serif-italic font-light">house</span>, in still life.
+              <h2 className="font-display text-5xl md:text-7xl tracking-tighter leading-[0.92] mt-3 text-[#0F172A]">
+                The <span className="text-[#38BDF8]">house</span>, in still life.
               </h2>
             </div>
             <a
@@ -27,7 +27,7 @@ export default function Gallery() {
               target="_blank"
               rel="noreferrer"
               data-testid="gallery-instagram-link"
-              className="eyebrow hover:text-white transition-colors"
+              className="eyebrow hover:text-[#38BDF8] transition-colors text-slate-500"
             >
               @athbarberclub →
             </a>
@@ -38,15 +38,14 @@ export default function Gallery() {
               <div
                 key={i}
                 data-testid={`gallery-tile-${i}`}
-                className={`col-span-12 ${t.span} gallery-tile reveal relative bg-[#111]`}
+                className={`col-span-12 ${t.span} tile reveal relative bg-slate-100 rounded-xl border-2 border-[#0F172A] overflow-hidden shadow-[4px_4px_0px_#0F172A] hover:-translate-y-1 hover:shadow-[6px_6px_0px_#0F172A] transition-all`}
               >
                 <img
                   src={t.src}
                   alt={t.alt}
                   className="w-full h-full object-cover"
-                  style={{ filter: "grayscale(100%) contrast(1.05) brightness(.9)" }}
                 />
-                <span className="absolute bottom-3 left-3 eyebrow text-white/70">Plate · {String(i + 1).padStart(2, "0")}</span>
+                <span className="absolute bottom-3 left-3 font-mono text-[0.6rem] uppercase tracking-wider text-white bg-[#0F172A] px-2 py-1 rounded">Plate · {String(i + 1).padStart(2, "0")}</span>
               </div>
             ))}
           </div>

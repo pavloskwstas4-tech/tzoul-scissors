@@ -37,7 +37,7 @@ export default function AdminLogin() {
       <Toaster theme="light" position="top-center" />
       
       <div className="w-full max-w-md rounded-2xl overflow-hidden shadow-2xl border border-gray-200 bg-white" data-testid="admin-login">
-        <div className="bg-gradient-to-br from-[#E63329] to-[#d62d25] text-white p-8">
+        <div className="bg-gradient-to-br from-[#38BDF8] to-[#0284C7] text-white p-8">
           <h1 className="title-massive text-3xl md:text-4xl">Admin Login<span className="text-white/80">.</span></h1>
           <p className="mt-2 text-white/85 text-sm">TZOUL BARBER Management</p>
         </div>
@@ -54,7 +54,7 @@ export default function AdminLogin() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="mt-2 bg-white border border-gray-200 rounded-lg focus-visible:ring-2 focus-visible:ring-[#E63329] focus-visible:border-[#E63329] px-4 py-2 text-lg"
+              className="mt-2 bg-white border border-gray-200 rounded-lg focus-visible:ring-2 focus-visible:ring-[#38BDF8] focus-visible:border-[#38BDF8] px-4 py-2 text-lg"
               placeholder="admin@tzoulbarber.com"
             />
           </div>
@@ -70,7 +70,7 @@ export default function AdminLogin() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="mt-2 bg-white border border-gray-200 rounded-lg focus-visible:ring-2 focus-visible:ring-[#E63329] focus-visible:border-[#E63329] px-4 py-2 text-lg"
+              className="mt-2 bg-white border border-gray-200 rounded-lg focus-visible:ring-2 focus-visible:ring-[#38BDF8] focus-visible:border-[#38BDF8] px-4 py-2 text-lg"
               placeholder="••••••••"
             />
           </div>
@@ -79,7 +79,7 @@ export default function AdminLogin() {
             type="submit"
             data-testid="admin-login-btn"
             disabled={loading}
-            className="w-full px-6 py-3 bg-[#E63329] text-white rounded-lg font-display uppercase text-sm hover:bg-[#d62d25] transition-all shadow-lg hover:shadow-xl disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full px-6 py-3 bg-[#F97316] text-white rounded-lg font-display uppercase text-sm hover:bg-[#EA580C] transition-all shadow-lg hover:shadow-xl disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {loading ? (
               <><Loader2 size={16} className="animate-spin" /> Logging in...</>

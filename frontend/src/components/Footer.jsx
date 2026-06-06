@@ -13,11 +13,11 @@ export default function Footer() {
   useEffect(() => { axios.get(`${API}/business`).then((r) => setBiz(r.data)).catch(() => {}); }, []);
 
   return (
-    <footer data-testid="site-footer" className="bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white">
+    <footer data-testid="site-footer" className="bg-[#0F172A] text-white border-t-2 border-[#0F172A]">
       <div className="max-w-[1500px] mx-auto px-5 md:px-8 pt-12 md:pt-16 pb-8">
         <div className="flex items-end justify-between flex-wrap gap-6">
           <div className="font-display leading-tight text-[18vw] md:text-[12vw] lg:text-[9rem] text-white">
-            TZOUL<span className="inline-block w-[0.18em] h-[0.18em] bg-[#E63329] rounded-sm align-baseline ml-2" />
+            TZOUL<span className="inline-block w-[0.18em] h-[0.18em] bg-[#38BDF8] rounded-sm align-baseline ml-2" />
           </div>
           <div className="font-mono text-[0.66rem] uppercase tracking-wider text-white/55 text-right">
             <div>Est. 2019 — Athens, GR</div>
@@ -26,7 +26,7 @@ export default function Footer() {
 
         <div className="mt-10 pt-8 border-t border-white/10 grid grid-cols-1 md:grid-cols-4 gap-8">
           <FCol label="Address" testid="footer-address">
-            <a href={biz ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(biz.address)}` : "#"} target="_blank" rel="noreferrer" className="flex items-start gap-2 text-white/85 hover:text-white transition-colors">
+            <a href={biz ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(biz.address)}` : "#"} target="_blank" rel="noreferrer" className="flex items-start gap-2 text-white/85 hover:text-[#38BDF8] transition-colors">
               <MapPin size={13} className="mt-1 shrink-0" />
               <span className="text-sm">{biz?.address || "Leoforos Irakleiou 526, Athens"}</span>
             </a>
@@ -36,20 +36,20 @@ export default function Footer() {
             <div className="text-white/55 text-xs mt-1">Wed closes 18:00 · Sun/Mon Closed</div>
           </FCol>
           <FCol label="Contact" testid="footer-contact">
-            <a href={`tel:${(biz?.phone || "+302112180303").replace(/\s/g, "")}`} className="flex items-center gap-2 text-white/85 hover:text-white text-sm transition-colors">
+            <a href={`tel:${(biz?.phone || "+302112180303").replace(/\s/g, "")}`} className="flex items-center gap-2 text-white/85 hover:text-[#38BDF8] text-sm transition-colors">
               <Phone size={13} /> {biz?.phone || "+30 21 1218 0303"}
             </a>
-            <a href={`mailto:${biz?.email || "tzoulbarber@gmail.com"}`} className="flex items-center gap-2 text-white/85 hover:text-white text-sm mt-1 transition-colors">
+            <a href={`mailto:${biz?.email || "tzoulbarber@gmail.com"}`} className="flex items-center gap-2 text-white/85 hover:text-[#38BDF8] text-sm mt-1 transition-colors">
               <Mail size={13} /> {biz?.email || "tzoulbarber@gmail.com"}
             </a>
           </FCol>
           <FCol label="Social" testid="footer-social">
             <div className="flex items-center justify-between gap-3 flex-wrap">
-              <a href="https://www.instagram.com/tzoulian_haircutz" target="_blank" rel="noreferrer" className="flex items-center gap-2 text-white/85 hover:text-white text-sm transition-colors" data-testid="footer-ig">
+              <a href="https://www.instagram.com/tzoulian_haircutz" target="_blank" rel="noreferrer" className="flex items-center gap-2 text-white/85 hover:text-[#38BDF8] text-sm transition-colors" data-testid="footer-ig">
                 <Instagram size={13} /> @tzoulian_haircutz
               </a>
               <Magnetic strength={0.18}>
-                <button onClick={openBooking} data-testid="footer-book" className="px-3 py-1.5 bg-[#E63329] text-white rounded-lg font-display uppercase text-[0.58rem] hover:bg-[#d62d25] transition-all shadow-md flex items-center gap-1">
+                <button onClick={openBooking} data-testid="footer-book" className="px-3 py-1.5 bg-[#F97316] text-white rounded-lg font-display uppercase text-[0.58rem] hover:bg-[#EA580C] transition-all border border-white/20 shadow-[2px_2px_0px_rgba(255,255,255,0.2)] flex items-center gap-1">
                   Book now <ArrowUpRight size={11} />
                 </button>
               </Magnetic>
@@ -69,8 +69,8 @@ export default function Footer() {
 function FCol({ label, children, testid }) {
   return (
     <div data-testid={testid}>
-      <div className="font-mono text-[0.62rem] uppercase tracking-wider text-white/55 mb-3 flex items-center gap-2">
-        <span className="text-[#E63329]">¦</span> {label}
+      <div className="font-mono text-[0.62rem] uppercase tracking-wider text-white/40 mb-3 flex items-center gap-2">
+        <span className="text-[#38BDF8]">¦</span> {label}
       </div>
       <div className="leading-relaxed">{children}</div>
     </div>

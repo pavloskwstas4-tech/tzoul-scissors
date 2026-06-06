@@ -203,7 +203,7 @@ export default function BookingModal() {
             animate={{ scaleX: 1 }}
             transition={{ duration: 0.45, delay: 0.18, ease: [0.16, 1, 0.3, 1] }}
             style={{ originX: 0 }}
-            className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#E63329] via-[#ff5040] to-[#E63329] rounded-t-2xl"
+            className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#38BDF8] via-[#7dd3fc] to-[#38BDF8] rounded-t-2xl"
           />
 
           {/* Close button */}
@@ -212,7 +212,7 @@ export default function BookingModal() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.3, duration: 0.25, ease: "backOut" }}
             onClick={handleClose}
-            className="absolute top-4 right-4 z-10 p-2 bg-black/5 hover:bg-[#E63329] hover:text-white hover:scale-110 active:scale-95 rounded-full transition-all duration-200"
+            className="absolute top-4 right-4 z-10 p-2 bg-black/5 hover:bg-[#38BDF8] hover:text-[#0F172A] hover:scale-110 active:scale-95 rounded-full transition-all duration-200"
             data-testid="close-modal"
           >
             <X size={20} />
@@ -229,7 +229,7 @@ export default function BookingModal() {
               <>
                 {/* Header */}
                 <motion.div variants={fadeUp} className="mb-6">
-                  <h2 className="title-massive text-4xl md:text-5xl">Book Now<span className="text-[#E63329]">.</span></h2>
+                  <h2 className="title-massive text-4xl md:text-5xl">Book Now<span className="text-[#38BDF8]">.</span></h2>
                   <p className="mt-2 text-gray-600">Complete your reservation in {STEPS.length} simple steps.</p>
                 </motion.div>
 
@@ -246,12 +246,12 @@ export default function BookingModal() {
                         onClick={() => i < step && setStep(i)}
                         whileHover={{ scale: completed || active ? 1 : 1.02 }}
                         className={`flex flex-col items-start gap-1 p-3 rounded-lg transition-colors ${
-                          active ? "bg-[#E63329] text-white shadow-lg scale-105" : 
+                          active ? "bg-[#38BDF8] text-[#0F172A] shadow-[3px_3px_0px_#0F172A] border-2 border-[#0F172A]" : 
                           completed ? "bg-gray-100 text-gray-700" : 
                           "bg-gray-50 text-gray-400"
                         }`}
                       >
-                        <span className={`font-mono text-[0.6rem] uppercase tracking-wider ${active ? "text-white/85" : "text-gray-400"}`}>
+                        <span className={`font-mono text-[0.6rem] uppercase tracking-wider ${active ? "text-[#0F172A]/70" : "text-gray-400"}`}>
                           Step 0{i + 1}
                         </span>
                         <span className="flex items-center gap-2 font-display uppercase text-sm">
@@ -275,7 +275,7 @@ export default function BookingModal() {
                         className="mb-5"
                       >
                         <h3 className="title-massive text-2xl md:text-3xl">
-                          {STEPS[step].heading}<span className="text-[#E63329]">.</span>
+                          {STEPS[step].heading}<span className="text-[#38BDF8]">.</span>
                         </h3>
                       </motion.div>
                     </AnimatePresence>
@@ -392,22 +392,22 @@ export default function BookingModal() {
                         <div className="md:col-span-2">
                           <Label htmlFor="b-name" className="font-mono text-[0.66rem] uppercase tracking-wider text-gray-600">Your name *</Label>
                           <Input id="b-name" data-testid="input-name" value={name} onChange={(e) => setName(e.target.value)}
-                                 className="mt-2 bg-white border border-gray-200 rounded-lg focus-visible:ring-2 focus-visible:ring-[#E63329] focus-visible:border-[#E63329] px-4 py-2 text-lg" />
+                                 className="mt-2 bg-white border border-gray-200 rounded-lg focus-visible:ring-2 focus-visible:ring-[#38BDF8] focus-visible:border-[#38BDF8] px-4 py-2 text-lg" />
                         </div>
                         <div>
                           <Label htmlFor="b-phone" className="font-mono text-[0.66rem] uppercase tracking-wider text-gray-600">Phone *</Label>
                           <Input id="b-phone" data-testid="input-phone" value={phone} onChange={(e) => setPhone(e.target.value)}
-                                 className="mt-2 bg-white border border-gray-200 rounded-lg focus-visible:ring-2 focus-visible:ring-[#E63329] focus-visible:border-[#E63329] px-4 py-2 text-lg" />
+                                 className="mt-2 bg-white border border-gray-200 rounded-lg focus-visible:ring-2 focus-visible:ring-[#38BDF8] focus-visible:border-[#38BDF8] px-4 py-2 text-lg" />
                         </div>
                         <div>
                           <Label htmlFor="b-email" className="font-mono text-[0.66rem] uppercase tracking-wider text-gray-600">Email</Label>
                           <Input id="b-email" data-testid="input-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                                 className="mt-2 bg-white border border-gray-200 rounded-lg focus-visible:ring-2 focus-visible:ring-[#E63329] focus-visible:border-[#E63329] px-4 py-2 text-lg" />
+                                 className="mt-2 bg-white border border-gray-200 rounded-lg focus-visible:ring-2 focus-visible:ring-[#38BDF8] focus-visible:border-[#38BDF8] px-4 py-2 text-lg" />
                         </div>
                         <div className="md:col-span-2">
                           <Label htmlFor="b-notes" className="font-mono text-[0.66rem] uppercase tracking-wider text-gray-600">Notes (optional)</Label>
                           <Textarea id="b-notes" data-testid="input-notes" value={notes} onChange={(e) => setNotes(e.target.value)}
-                                    rows={3} className="mt-2 bg-white border border-gray-200 rounded-lg focus-visible:ring-2 focus-visible:ring-[#E63329] focus-visible:border-[#E63329]" />
+                                    rows={3} className="mt-2 bg-white border border-gray-200 rounded-lg focus-visible:ring-2 focus-visible:ring-[#38BDF8] focus-visible:border-[#38BDF8]" />
                         </div>
                       </div>
                     )}
@@ -432,7 +432,7 @@ export default function BookingModal() {
                             data-testid="step-next"
                             disabled={!canNext()}
                             onClick={() => setStep((s) => s + 1)}
-                            className="flex-1 px-4 py-3 bg-[#E63329] text-white rounded-lg font-display uppercase text-sm disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#d62d25] transition-colors shadow-md flex items-center justify-center gap-2"
+                        className="flex-1 px-4 py-3 bg-[#F97316] text-white rounded-lg font-display uppercase text-sm disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#EA580C] transition-colors border-2 border-[#0F172A] shadow-[3px_3px_0px_#0F172A] hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_#0F172A] flex items-center justify-center gap-2"
                           >
                             Next <ArrowRight size={13} />
                           </button>
@@ -443,7 +443,7 @@ export default function BookingModal() {
                             data-testid="confirm-booking"
                             disabled={submitting || !canNext()}
                             onClick={submit}
-                            className="flex-1 px-4 py-3 bg-[#E63329] text-white rounded-lg font-display uppercase text-sm disabled:opacity-50 hover:bg-[#d62d25] transition-colors shadow-md flex items-center justify-center gap-2"
+                            className="flex-1 px-4 py-3 bg-[#F97316] text-white rounded-lg font-display uppercase text-sm disabled:opacity-50 hover:bg-[#EA580C] transition-colors border-2 border-[#0F172A] shadow-[3px_3px_0px_#0F172A] hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_#0F172A] flex items-center justify-center gap-2"
                           >
                             {submitting ? <><Loader2 size={13} className="animate-spin" /> Confirming…</> : <>Confirm Booking <Check size={13} /></>}
                           </button>

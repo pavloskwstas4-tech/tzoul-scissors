@@ -52,7 +52,12 @@ module.exports = {
   				'3': 'hsl(var(--chart-3))',
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
-  			}
+  			},
+  			ink: '#0F172A',
+  			'brand-blue': '#38BDF8',
+  			'brand-orange': '#F97316',
+  			'brand-bg': '#F8FAFC',
+  			'brand-surface': '#E0F2FE',
   		},
   		keyframes: {
   			'accordion-down': {
