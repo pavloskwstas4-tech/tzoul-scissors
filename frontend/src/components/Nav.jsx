@@ -7,7 +7,6 @@ import { useBooking } from "@/contexts/BookingContext";
 
 export default function Nav() {
   const [open, setOpen] = useState(false);
-  const [lang, setLang] = useState("EN");
   const [active, setActive] = useState("hero");
   const loc = useLocation();
   const nav = useNavigate();
@@ -79,18 +78,6 @@ export default function Nav() {
 
         {/* Right */}
         <div className="flex items-center gap-3 shrink-0">
-          <div className="hidden md:flex rounded-full overflow-hidden border border-gray-200 font-mono text-[0.66rem]" data-testid="lang-switch">
-            {["EL", "EN"].map((l) => (
-              <button
-                key={l}
-                onClick={() => setLang(l)}
-                data-testid={`lang-${l}`}
-                className={`px-3 py-1.5 rounded-md transition-all text-xs font-mono ${lang === l ? "bg-[#1D1D1F] text-white" : "text-[#86868B] hover:bg-black/5"}`}
-              >
-                {l}
-              </button>
-            ))}
-          </div>
           <Magnetic strength={0.2}>
             <button onClick={openBooking} data-testid="nav-book-btn" className="btn-dark text-xs flex items-center gap-1.5 px-4 py-2">
               <ChevronsRight size={12} /> Book now
