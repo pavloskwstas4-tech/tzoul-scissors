@@ -1,0 +1,118 @@
+{
+  "theme_and_archetype": {
+    "theme": "LIGHT",
+    "archetype": "3 (Pastel & Soft) mixed with E1 Twist (Neo-Brutalist contrast)",
+    "primary_vibe": "Fresh, colorful, modern, clean, confident",
+    "reasoning": "The user requested a modern, clean look with baby blue and a colorful, vibrant aesthetic. Moving away from the dark/red grungy look to a fresh, premium, high-contrast light theme. Using Neo-Brutalist elements (sharp borders, offset shadows) keeps the baby blue from looking childish and maintains a premium, structured barbershop feel."
+  },
+  "typography": {
+    "headings": {
+      "family": "Outfit",
+      "weights": ["500", "700", "900"],
+      "styling": "tracking-tight, never centered by default, strong personality."
+    },
+    "body": {
+      "family": "Manrope",
+      "weights": ["400", "500", "700"],
+      "styling": "leading-relaxed, highly legible."
+    },
+    "scale": {
+      "h1": "text-5xl sm:text-6xl+ font-black tracking-tighter",
+      "h2": "text-4xl sm:text-5xl font-bold tracking-tight",
+      "h3": "text-2xl sm:text-3xl font-bold",
+      "h4": "text-lg sm:text-xl font-semibold",
+      "body": "text-base text-slate-800",
+      "labels": "text-xs font-bold uppercase tracking-[0.2em]"
+    }
+  },
+  "color_palette": {
+    "background": {
+      "base": "#F8FAFC",
+      "surface": "#FFFFFF",
+      "surface_alt": "#E0F2FE"
+    },
+    "brand": {
+      "primary": "#38BDF8",
+      "primary_hover": "#0284C7",
+      "accent": "#F97316",
+      "accent_hover": "#EA580C"
+    },
+    "text": {
+      "primary": "#0F172A",
+      "secondary": "#334155",
+      "inverse": "#FFFFFF"
+    },
+    "borders": {
+      "subtle": "#E2E8F0",
+      "strong": "#0F172A"
+    },
+    "rules": "Use Baby Blue (#38BDF8) as the primary brand color for large areas, headers, and highlights. Use vibrant Orange (#F97316) exclusively for 'BOOK NOW' and primary CTAs to make them pop. Text must be deep slate (#0F172A) for crisp APCA contrast. Surfaces feature crisp 2px borders (#0F172A) and offset shadows for that colorful neo-brutalist pop."
+  },
+  "spacing_and_layout": {
+    "system": "Tailwind generous spacing: p-6, p-8, p-12, p-16, p-24.",
+    "bento_grid": "Use Mode A 'Tetris Grid' for the Gallery and Services preview (grid-cols-1 md:grid-cols-8 lg:grid-cols-12 with gap-8).",
+    "borders_and_shadows": "Neo-brutalist / Structural. Cards use solid white backgrounds, 2px solid slate-900 borders, and hard 4px offset drop-shadows (shadow-[4px_4px_0px_#0F172A]) to feel playful, colorful, and highly modern without being childish.",
+    "alignment": "Mobile-first. Optical alignment. Left-align text blocks. Asymmetry preferred."
+  },
+  "components": {
+    "marketing_pages": "Use pure HTML + Tailwind. No rigid Shadcn cards for the main marketing sections. Use raw divs to achieve overlapping and bento grids.",
+    "booking_modal": "Use Shadcn Dialog, Form, Input, Select. Customize to remove 'Vercel-look'. Make inputs have 2px borders and solid focus states (focus:ring-primary focus:border-primary). Implement as a multi-step UI with progress indicator (Steps 1 to 4).",
+    "admin_dashboard": "Use Shadcn Table, Tabs, Cards. Strict grid hierarchy, clean white surfaces with subtle 1px borders.",
+    "marquee": "Use react-fast-marquee. 'Kinetic Texture' style: text-6xl outline text (text-transparent [-webkit-text-stroke:2px_#0F172A]) on Baby Blue background.",
+    "icons": "Use @phosphor-icons/react (Duotone weight) for a high-end modern feel. Install via yarn add @phosphor-icons/react."
+  },
+  "motion_and_interaction": {
+    "hover_states": "Buttons must have explicit hover states (e.g., hover:-translate-y-1 hover:shadow-[6px_6px_0px_#0F172A] transition-all duration-200).",
+    "scroll_animations": "Staggered fade-up for bento grid items using framer-motion.",
+    "accessibility": "Respect prefers-reduced-motion. Ensure focus rings on all inputs.",
+    "music_toggle": "Sticky floating button (bottom-right), circular, glassmorphism or hard-shadow style, toggles background track."
+  },
+  "accessibility_and_testing": {
+    "contrast": "Text over baby blue must be dark (#0F172A). Orange CTAs must use white text and meet 3:1 contrast for large text.",
+    "testing_attributes": "All interactive elements must include data-testid. Examples: data-testid='book-now-hero-btn', data-testid='service-card-1', data-testid='booking-modal-next-btn', data-testid='admin-login-submit'."
+  },
+  "media_urls": {
+    "hero_backgrounds": [
+      {
+        "url": "https://images.unsplash.com/photo-1773904215697-e6c21fc27ac2?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NzR8MHwxfHNlYXJjaHwyfHxtb2Rlcm4lMjBiYXJiZXJzaG9wJTIwaW50ZXJpb3IlMjBicmlnaHR8ZW58MHx8fHwxNzgwNzM5Mjc4fDA&ixlib=rb-4.1.0&q=85",
+        "description": "Luxurious barber chairs and sinks in a dimly lit salon",
+        "category": "hero_background"
+      }
+    ],
+    "team_and_services": [
+      {
+        "url": "https://images.unsplash.com/photo-1605497788044-5a32c7078486?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1OTN8MHwxfHNlYXJjaHwxfHxiYXJiZXIlMjBjdXR0aW5nJTIwaGFpciUyMG1lbiUyMGdyb29taW5nfGVufDB8fHx8MTc4MDczOTI3OHww&ixlib=rb-4.1.0&q=85",
+        "description": "Barber at work",
+        "category": "services_preview"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1647140655214-e4a2d914971f?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1OTN8MHwxfHNlYXJjaHwzfHxiYXJiZXIlMjBjdXR0aW5nJTIwaGFpciUyMG1lbiUyMGdyb29taW5nfGVufDB8fHx8MTc4MDczOTI3OHww&ixlib=rb-4.1.0&q=85",
+        "description": "a man cutting another mans hair with a pair of scissors",
+        "category": "team_member"
+      }
+    ],
+    "gallery": [
+      {
+        "url": "https://images.pexels.com/photos/16098668/pexels-photo-16098668.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Profile view of a stylish South Asian man showcasing a modern haircut in a barbershop setting.",
+        "category": "gallery_item"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1629189784191-9afdcbcb0398?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA3MDB8MHwxfHNlYXJjaHwyfHxtZW4lMjBzdHlsaXNoJTIwaGFpcmN1dHxlbnwwfHx8fDE3ODA3MzkyNzh8MA&ixlib=rb-4.1.0&q=85",
+        "description": "topless man with black beard",
+        "category": "gallery_item"
+      },
+      {
+        "url": "https://images.pexels.com/photos/4625630/pexels-photo-4625630.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "A man receives a haircut and trim in a professional barbershop setting with focus on style and detail.",
+        "category": "gallery_item"
+      }
+    ]
+  },
+  "page_specific_instructions": {
+    "home_page": "Hero: High impact, Baby Blue dominant overlay (bg-sky-400/80) on background image if needed, or pure CSS background. Huge text for 'TZOUL BARBER'. Next, a Marquee bar. Then Bento Grid for Services and Team previews. Gallery is an Instagram-style asymmetrical grid. Contact section at bottom. Include floating Music toggle button.",
+    "booking_modal": "Triggered by any 'Book Now' button. Overlay is Glassmorphism (backdrop-blur-xl bg-slate-900/40). Modal itself is solid white, 2px border, hard shadow. Steps: 1. Service (grid of cards), 2. Barber (cards with photos), 3. Date/Time (Shadcn Calendar + time slots), 4. Details (Shadcn Form), 5. Confirmation (Success graphic/check).",
+    "admin_dashboard": "Clean, high-contrast utility. Sidebar navigation (Baby Blue background, dark text). Main area uses white cards for metric summaries and Shadcn Tables for Booking lists. Strict, organized, no playful offsets here.",
+    "style_finder": "Interactive quiz. One question per view using framer-motion slide transitions. 'What is your hair type?' -> 'What length?' -> 'Beard?' -> Recommends a service and barber."
+  }
+}
