@@ -179,7 +179,7 @@ export default function BookingModal() {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.3, ease: "easeOut" }}
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-4"
         onClick={handleClose}
       >
         <Toaster theme="light" position="top-center" />
@@ -193,7 +193,7 @@ export default function BookingModal() {
           transition={{ type: "spring", stiffness: 340, damping: 26, mass: 0.9 }}
           ref={scrollRef}
           style={{ willChange: "transform, opacity" }}
-          className="relative bg-white w-full max-w-6xl max-h-[90vh] overflow-y-auto overscroll-contain rounded-2xl shadow-2xl"
+          className="relative bg-white/96 backdrop-blur-2xl w-full max-w-5xl max-h-[92vh] overflow-y-auto overscroll-contain rounded-3xl shadow-[0_32px_80px_rgba(0,0,0,0.18),0_8px_24px_rgba(0,0,0,0.08)]"
           onClick={(e) => e.stopPropagation()}
           data-testid="booking-modal"
         >
@@ -230,7 +230,7 @@ export default function BookingModal() {
                 {/* Header */}
                 <motion.div variants={fadeUp} className="mb-6">
                   <h2 className="title-massive text-4xl md:text-5xl">Book Now.</h2>
-                  <p className="mt-2 text-gray-600">Complete your reservation in {STEPS.length} simple steps.</p>
+                  <p className="mt-2 text-[#86868B] text-sm">Complete your reservation in {STEPS.length} simple steps.</p>
                 </motion.div>
 
                 {/* Step tabs */}
@@ -291,23 +291,25 @@ export default function BookingModal() {
                       >
 
                     {step === 0 && (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3" data-testid="step-service">
-                        {services.map((s, i) => {
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5" data-testid="step-service">
+                        {services.map((s) => {
                           const sel = serviceId === s.id;
                           return (
                             <button
                               key={s.id}
                               data-testid={`pick-service-${s.id}`}
                               onClick={() => setServiceId(s.id)}
-                              className={`text-left rounded-xl p-4 transition-all ${
-                                sel ? "bg-red-50 border-2 border-[#E63329] shadow-md scale-105" : "bg-gray-50 border border-gray-200 hover:border-gray-300 hover:shadow"
+                              className={`text-left rounded-2xl p-4 transition-all duration-200 ${
+                                sel
+                                  ? "bg-[#1D1D1F] text-white shadow-[0_6px_20px_rgba(0,0,0,0.14)] scale-[1.02]"
+                                  : "bg-[#F5F5F7] hover:bg-white hover:shadow-[0_4px_16px_rgba(0,0,0,0.07)] border border-transparent hover:border-black/[0.06]"
                               }`}
                             >
                               <div className="flex items-center justify-between gap-3">
-                                <span className="font-display uppercase text-base truncate">{s.name}</span>
-                                <span className="font-display text-xl text-[#E63329] shrink-0">€{s.price}</span>
+                                <span className={`font-display uppercase text-base truncate ${sel ? "text-white" : "text-[#1D1D1F]"}`}>{s.name}</span>
+                                <span className={`font-display text-xl shrink-0 ${sel ? "text-white/80" : "text-[#1D1D1F]"}`}>€{s.price}</span>
                               </div>
-                              <div className="font-mono text-[0.6rem] uppercase tracking-wider text-gray-500 mt-2">
+                              <div className={`font-mono text-[0.6rem] uppercase tracking-wider mt-2 ${sel ? "text-white/50" : "text-[#A1A1A6]"}`}>
                                 {s.category} · {s.duration} min
                               </div>
                             </button>
@@ -319,7 +321,7 @@ export default function BookingModal() {
                     {step === 1 && (
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-4" data-testid="step-barber">
                         {eligibleBarbers.length === 0 && (
-                          <div className="col-span-full p-6 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-sm" data-testid="no-eligible-barbers">
+                          <div className="col-span-full p-6 rounded-2xl bg-[#F5F5F7] border border-black/[0.06] text-[#86868B] text-sm" data-testid="no-eligible-barbers">
                             No barber currently offers this service. Please go back and choose another service.
                           </div>
                         )}
@@ -330,16 +332,18 @@ export default function BookingModal() {
                               key={b.id}
                               data-testid={`pick-barber-${b.id}`}
                               onClick={() => setBarberId(b.id)}
-                              className={`text-left rounded-xl overflow-hidden transition-all ${
-                                sel ? "ring-2 ring-[#E63329] shadow-lg scale-105" : "hover:shadow-md"
+                              className={`text-left rounded-2xl overflow-hidden transition-all duration-200 ${
+                                sel
+                                  ? "ring-2 ring-[#1D1D1F] shadow-[0_8px_24px_rgba(0,0,0,0.12)] scale-[1.02]"
+                                  : "hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] border border-black/[0.06]"
                               }`}
                             >
-                              <div className="aspect-[3/4] overflow-hidden bg-gray-900">
-                                <img src={b.image} alt={b.name} className="w-full h-full object-cover" style={{ filter: "grayscale(100%)" }} />
+                              <div className="aspect-[3/4] overflow-hidden bg-[#ECECEE]">
+                                <img src={b.image} alt={b.name} className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" />
                               </div>
-                              <div className={`p-3 ${sel ? "bg-[#E63329] text-white" : "bg-gray-50"}`}>
+                              <div className={`p-3 transition-colors ${sel ? "bg-[#1D1D1F] text-white" : "bg-white"}`}>
                                 <div className="font-display uppercase text-sm leading-tight">{b.name}</div>
-                                <div className={`font-mono text-[0.58rem] uppercase tracking-wider mt-1 ${sel ? "text-white/85" : "text-gray-500"}`}>
+                                <div className={`font-mono text-[0.58rem] uppercase tracking-wider mt-1 ${sel ? "text-white/55" : "text-[#A1A1A6]"}`}>
                                   {b.role}
                                 </div>
                               </div>
@@ -350,23 +354,29 @@ export default function BookingModal() {
                     )}
 
                     {step === 2 && (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6" data-testid="step-datetime">
-                        <div className="rounded-xl border border-gray-200 p-4 md:p-5 bg-gray-50">
-                          <div className="font-mono text-[0.66rem] uppercase tracking-wider text-gray-500 mb-3">Pick a date</div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4" data-testid="step-datetime">
+                        <div className="rounded-2xl border border-black/[0.06] p-4 md:p-5 bg-[#F5F5F7]">
+                          <div className="font-mono text-[0.62rem] uppercase tracking-wider text-[#86868B] mb-3">Pick a date</div>
                           <Calendar
                             mode="single"
                             selected={date}
                             onSelect={(d) => { setDate(d); setTime(""); }}
                             disabled={disabled}
-                            className="text-gray-900"
+                            className="text-[#1D1D1F]"
                             data-testid="booking-calendar"
                           />
                         </div>
-                        <div className="rounded-xl border border-gray-200 p-4 md:p-5 bg-gray-50">
-                          <div className="font-mono text-[0.66rem] uppercase tracking-wider text-gray-500 mb-3">Pick a time</div>
-                          {!date && <p className="text-gray-500 text-sm">Select a date first.</p>}
-                          {date && loadingSlots && <p className="text-gray-500 text-sm flex items-center gap-2"><Loader2 size={14} className="animate-spin" /> Loading slots…</p>}
-                          {date && !loadingSlots && slots.length === 0 && <p className="text-gray-500 text-sm">No times available for this day.</p>}
+                        <div className="rounded-2xl border border-black/[0.06] p-4 md:p-5 bg-[#F5F5F7]">
+                          <div className="font-mono text-[0.62rem] uppercase tracking-wider text-[#86868B] mb-3">Pick a time</div>
+                          {!date && <p className="text-[#A1A1A6] text-sm">Select a date first.</p>}
+                          {date && loadingSlots && (
+                            <p className="text-[#86868B] text-sm flex items-center gap-2">
+                              <Loader2 size={14} className="animate-spin" /> Loading slots…
+                            </p>
+                          )}
+                          {date && !loadingSlots && slots.length === 0 && (
+                            <p className="text-[#86868B] text-sm">No times available for this day.</p>
+                          )}
                           {date && !loadingSlots && slots.length > 0 && (
                             <div className="grid grid-cols-3 gap-2" data-testid="time-slots">
                               {slots.map((t) => (
@@ -374,8 +384,10 @@ export default function BookingModal() {
                                   key={t}
                                   data-testid={`slot-${t}`}
                                   onClick={() => setTime(t)}
-                                  className={`py-3 text-sm font-mono rounded-lg transition-all ${
-                                    time === t ? "bg-[#E63329] text-white shadow-md scale-105" : "bg-white border border-gray-200 hover:border-[#E63329] hover:shadow"
+                                  className={`py-3 text-sm font-mono rounded-xl transition-all duration-200 ${
+                                    time === t
+                                      ? "bg-[#1D1D1F] text-white shadow-[0_4px_12px_rgba(0,0,0,0.12)] scale-105"
+                                      : "bg-white border border-black/[0.06] text-[#1D1D1F] hover:border-[#1D1D1F] hover:shadow-[0_2px_8px_rgba(0,0,0,0.06)]"
                                   }`}
                                 >
                                   {t}
@@ -388,26 +400,26 @@ export default function BookingModal() {
                     )}
 
                     {step === 3 && (
-                      <div className="rounded-xl border border-gray-200 p-5 md:p-8 bg-gray-50 grid grid-cols-1 md:grid-cols-2 gap-6" data-testid="step-details">
+                      <div className="rounded-2xl border border-black/[0.06] p-5 md:p-8 bg-[#F5F5F7] grid grid-cols-1 md:grid-cols-2 gap-6" data-testid="step-details">
                         <div className="md:col-span-2">
-                          <Label htmlFor="b-name" className="font-mono text-[0.66rem] uppercase tracking-wider text-gray-600">Your name *</Label>
+                          <Label htmlFor="b-name" className="font-mono text-[0.62rem] uppercase tracking-wider text-[#86868B]">Your name *</Label>
                           <Input id="b-name" data-testid="input-name" value={name} onChange={(e) => setName(e.target.value)}
-                                 className="mt-2 bg-white border border-gray-200 rounded-xl focus-visible:ring-2 focus-visible:ring-black/20 focus-visible:border-black/30 px-4 py-2 text-lg" />
+                                 className="mt-2 bg-white border border-black/[0.08] rounded-xl focus-visible:ring-2 focus-visible:ring-black/20 focus-visible:border-black/30 px-4 py-2.5 text-lg text-[#1D1D1F]" />
                         </div>
                         <div>
-                          <Label htmlFor="b-phone" className="font-mono text-[0.66rem] uppercase tracking-wider text-[#86868B]">Phone *</Label>
+                          <Label htmlFor="b-phone" className="font-mono text-[0.62rem] uppercase tracking-wider text-[#86868B]">Phone *</Label>
                           <Input id="b-phone" data-testid="input-phone" value={phone} onChange={(e) => setPhone(e.target.value)}
-                                 className="mt-2 bg-white border border-gray-200 rounded-xl focus-visible:ring-2 focus-visible:ring-black/20 focus-visible:border-black/30 px-4 py-2 text-lg" />
+                                 className="mt-2 bg-white border border-black/[0.08] rounded-xl focus-visible:ring-2 focus-visible:ring-black/20 focus-visible:border-black/30 px-4 py-2.5 text-lg text-[#1D1D1F]" />
                         </div>
                         <div>
-                          <Label htmlFor="b-email" className="font-mono text-[0.66rem] uppercase tracking-wider text-[#86868B]">Email</Label>
+                          <Label htmlFor="b-email" className="font-mono text-[0.62rem] uppercase tracking-wider text-[#86868B]">Email</Label>
                           <Input id="b-email" data-testid="input-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                                 className="mt-2 bg-white border border-gray-200 rounded-xl focus-visible:ring-2 focus-visible:ring-black/20 focus-visible:border-black/30 px-4 py-2 text-lg" />
+                                 className="mt-2 bg-white border border-black/[0.08] rounded-xl focus-visible:ring-2 focus-visible:ring-black/20 focus-visible:border-black/30 px-4 py-2.5 text-lg text-[#1D1D1F]" />
                         </div>
                         <div className="md:col-span-2">
-                          <Label htmlFor="b-notes" className="font-mono text-[0.66rem] uppercase tracking-wider text-[#86868B]">Notes (optional)</Label>
+                          <Label htmlFor="b-notes" className="font-mono text-[0.62rem] uppercase tracking-wider text-[#86868B]">Notes (optional)</Label>
                           <Textarea id="b-notes" data-testid="input-notes" value={notes} onChange={(e) => setNotes(e.target.value)}
-                                    rows={3} className="mt-2 bg-white border border-gray-200 rounded-xl focus-visible:ring-2 focus-visible:ring-black/20 focus-visible:border-black/30" />
+                                    rows={3} className="mt-2 bg-white border border-black/[0.08] rounded-xl focus-visible:ring-2 focus-visible:ring-black/20 focus-visible:border-black/30 text-[#1D1D1F]" />
                         </div>
                       </div>
                     )}
@@ -422,7 +434,7 @@ export default function BookingModal() {
                         data-testid="step-back"
                         onClick={() => setStep((s) => Math.max(0, s - 1))}
                         disabled={step === 0}
-                        className="flex-1 px-4 py-3 border border-gray-300 rounded-lg font-display uppercase text-sm disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
+                        className="flex-1 px-4 py-3 border border-black/[0.10] rounded-xl font-display uppercase text-sm text-[#86868B] disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#F5F5F7] hover:text-[#1D1D1F] transition-all flex items-center justify-center gap-2"
                       >
                         <ArrowLeft size={13} /> Back
                       </button>
@@ -476,9 +488,9 @@ export default function BookingModal() {
 
 function ReviewRow({ label, value }) {
   return (
-    <div className="flex items-start justify-between gap-6 py-3 border-b border-gray-200 last:border-0">
-      <span className="font-mono text-[0.66rem] uppercase tracking-wider text-gray-500">{label}</span>
-      <span className="text-right text-gray-900">{value}</span>
+    <div className="flex items-start justify-between gap-6 py-3 border-b border-black/[0.06] last:border-0">
+      <span className="font-mono text-[0.62rem] uppercase tracking-wider text-[#86868B]">{label}</span>
+      <span className="text-right text-[#1D1D1F] font-medium">{value}</span>
     </div>
   );
 }
@@ -486,21 +498,21 @@ function ReviewRow({ label, value }) {
 function SumRow({ k, v }) {
   return (
     <div className="flex justify-between gap-3 items-center">
-      <span className="font-mono text-[0.66rem] uppercase tracking-wider text-gray-500">{k}</span>
-      <span className="font-display uppercase text-right truncate text-gray-900">{v}</span>
+      <span className="font-mono text-[0.62rem] uppercase tracking-wider text-[#86868B]">{k}</span>
+      <span className="font-display uppercase text-right truncate text-[#1D1D1F]">{v}</span>
     </div>
   );
 }
 
 function SuccessCard({ booking, onNew, onClose }) {
   return (
-    <div className="max-w-3xl mx-auto rounded-xl overflow-hidden shadow-lg border border-gray-200" data-testid="booking-success">
-      <div className="bg-[#E63329] text-white p-6 md:p-8">
-        <div className="font-mono text-[0.7rem] uppercase tracking-wider text-white/80">Reservation Confirmed</div>
+    <div className="max-w-3xl mx-auto rounded-3xl overflow-hidden shadow-[0_24px_60px_rgba(0,0,0,0.12)] border border-black/[0.06]" data-testid="booking-success">
+      <div className="bg-[#1D1D1F] text-white p-6 md:p-8">
+        <div className="font-mono text-[0.62rem] uppercase tracking-wider text-white/50">Reservation Confirmed</div>
         <h2 className="title-massive text-4xl md:text-5xl mt-2 leading-tight">
-          See you at the house<span className="text-white/80">.</span>
+          See you at the house.
         </h2>
-        <p className="mt-2 text-white/90">Thanks, {booking.name.split(" ")[0]}. Your seat is locked in.</p>
+        <p className="mt-2 text-white/60 text-sm">Thanks, {booking.name.split(" ")[0]}. Your seat is locked in.</p>
       </div>
       <div className="p-6 md:p-8 space-y-3 bg-white">
         <ReviewRow label="Service"   value={`${booking.service_name} · €${booking.price}`} />
@@ -509,13 +521,13 @@ function SuccessCard({ booking, onNew, onClose }) {
         <ReviewRow label="Time"      value={booking.time} />
         <ReviewRow label="Reference" value={booking.id.slice(0, 8).toUpperCase()} />
       </div>
-      <div className="border-t border-gray-200 p-5 md:p-6 flex flex-wrap items-center gap-3 justify-between bg-gray-50">
-        <p className="text-xs text-gray-600 max-w-md">
-          To reschedule, call <span className="font-display">+30 21 1218 0303</span>.
+      <div className="border-t border-black/[0.06] p-5 md:p-6 flex flex-wrap items-center gap-3 justify-between bg-[#F5F5F7]">
+        <p className="text-xs text-[#86868B] max-w-md">
+          To reschedule, call <span className="font-display text-[#1D1D1F]">+30 21 1218 0303</span>.
         </p>
         <div className="flex gap-3">
-          <button data-testid="success-new" onClick={onNew} className="px-4 py-2 border border-gray-300 rounded-lg font-display uppercase text-sm hover:bg-gray-100 transition-colors">New booking</button>
-          <button data-testid="success-home" onClick={onClose} className="px-4 py-2 bg-[#E63329] text-white rounded-lg font-display uppercase text-sm hover:bg-[#d62d25] transition-colors shadow-md flex items-center gap-2"><ChevronsRight size={14} /> Close</button>
+          <button data-testid="success-new" onClick={onNew} className="px-4 py-2 border border-black/[0.10] rounded-xl font-display uppercase text-sm text-[#86868B] hover:bg-white hover:text-[#1D1D1F] transition-all">New booking</button>
+          <button data-testid="success-home" onClick={onClose} className="btn-dark px-4 py-2 text-sm flex items-center gap-2"><ChevronsRight size={14} /> Close</button>
         </div>
       </div>
     </div>
