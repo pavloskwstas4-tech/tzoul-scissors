@@ -164,52 +164,77 @@ export default function BookingModal() {
 
   if (!isBookingOpen) return null;
 
+  // Shared stagger child variant
+  const fadeUp = {
+    hidden: { opacity: 0, y: 22 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.52, ease: [0.16, 1, 0.3, 1] } },
+  };
+
   return (
     <AnimatePresence>
+      {/* Backdrop */}
       <motion.div
+        key="booking-backdrop"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.22, ease: "easeOut" }}
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-4"
+        transition={{ duration: 0.3, ease: "easeOut" }}
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
         onClick={handleClose}
       >
         <Toaster theme="light" position="top-center" />
-        
+
+        {/* Modal card — dramatic spring entrance */}
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 24 }}
-          transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+          key="booking-card"
+          initial={{ opacity: 0, scale: 0.88, y: -32 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.94, y: 28 }}
+          transition={{ type: "spring", stiffness: 340, damping: 26, mass: 0.9 }}
           ref={scrollRef}
           style={{ willChange: "transform, opacity" }}
           className="relative bg-white w-full max-w-6xl max-h-[90vh] overflow-y-auto overscroll-contain rounded-2xl shadow-2xl"
           onClick={(e) => e.stopPropagation()}
           data-testid="booking-modal"
         >
-          {/* Red accent strip on top — static, no animation */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#E63329] via-[#ff5040] to-[#E63329] rounded-t-2xl" />
+          {/* Red accent strip — sweeps in from left */}
+          <motion.div
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: 0.45, delay: 0.18, ease: [0.16, 1, 0.3, 1] }}
+            style={{ originX: 0 }}
+            className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#E63329] via-[#ff5040] to-[#E63329] rounded-t-2xl"
+          />
 
           {/* Close button */}
-          <button
+          <motion.button
+            initial={{ opacity: 0, scale: 0.7 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.3, duration: 0.25, ease: "backOut" }}
             onClick={handleClose}
             className="absolute top-4 right-4 z-10 p-2 bg-black/5 hover:bg-[#E63329] hover:text-white hover:scale-110 active:scale-95 rounded-full transition-all duration-200"
             data-testid="close-modal"
           >
             <X size={20} />
-          </button>
+          </motion.button>
 
-          <div className="p-6 md:p-10">
+          {/* Staggered inner content */}
+          <motion.div
+            className="p-6 md:p-10"
+            initial="hidden"
+            animate="visible"
+            variants={{ visible: { transition: { staggerChildren: 0.09, delayChildren: 0.15 } } }}
+          >
             {!success && (
               <>
                 {/* Header */}
-                <div className="mb-6">
+                <motion.div variants={fadeUp} className="mb-6">
                   <h2 className="title-massive text-4xl md:text-5xl">Book Now<span className="text-[#E63329]">.</span></h2>
                   <p className="mt-2 text-gray-600">Complete your reservation in {STEPS.length} simple steps.</p>
-                </div>
+                </motion.div>
 
-                {/* Step tabs - Modern design */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-8" data-testid="booking-stepper">
+                {/* Step tabs */}
+                <motion.div variants={fadeUp} className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-8" data-testid="booking-stepper">
                   {STEPS.map((s, i) => {
                     const Icon = s.icon;
                     const active = i === step;
@@ -219,10 +244,6 @@ export default function BookingModal() {
                         key={s.label}
                         data-testid={`step-tab-${i}`}
                         onClick={() => i < step && setStep(i)}
-                        variants={{
-                          hidden: { opacity: 0, y: 12 },
-                          visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } },
-                        }}
                         whileHover={{ scale: completed || active ? 1 : 1.02 }}
                         className={`flex flex-col items-start gap-1 p-3 rounded-lg transition-colors ${
                           active ? "bg-[#E63329] text-white shadow-lg scale-105" : 
@@ -239,22 +260,35 @@ export default function BookingModal() {
                       </motion.button>
                     );
                   })}
-                </div>
+                </motion.div>
 
-                <motion.div
-                  className="max-w-4xl mx-auto"
-                  variants={{
-                    hidden: { opacity: 0, y: 20 },
-                    visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] } },
-                  }}
-                >
+                <motion.div variants={fadeUp} className="max-w-4xl mx-auto">
                   <div className="lg:col-span-8">
-                    {/* Section heading */}
-                    <div className="mb-5">
-                      <h3 className="title-massive text-2xl md:text-3xl">
-                        {STEPS[step].heading}<span className="text-[#E63329]">.</span>
-                      </h3>
-                    </div>
+                    {/* Section heading with step-change slide animation */}
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={`heading-${step}`}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                        className="mb-5"
+                      >
+                        <h3 className="title-massive text-2xl md:text-3xl">
+                          {STEPS[step].heading}<span className="text-[#E63329]">.</span>
+                        </h3>
+                      </motion.div>
+                    </AnimatePresence>
+
+                    {/* Step content with slide-in/out transition */}
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={`step-content-${step}`}
+                        initial={{ opacity: 0, x: 30 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -30 }}
+                        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                      >
 
                     {step === 0 && (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3" data-testid="step-service">
@@ -377,10 +411,13 @@ export default function BookingModal() {
                         </div>
                       </div>
                     )}
+
+                      </motion.div>
+                    </AnimatePresence>
                   </div>
 
                   {/* Navigation Buttons */}
-                  <div className="flex items-center gap-3 mt-8 max-w-md mx-auto">
+                  <motion.div variants={fadeUp} className="flex items-center gap-3 mt-8 max-w-md mx-auto">
                       <button
                         data-testid="step-back"
                         onClick={() => setStep((s) => Math.max(0, s - 1))}
@@ -412,19 +449,25 @@ export default function BookingModal() {
                           </button>
                         </Magnetic>
                       )}
-                    </div>
+                    </motion.div>
                   </motion.div>
               </>
             )}
 
             {success && (
-              <SuccessCard
-                booking={success}
-                onNew={() => resetForm()}
-                onClose={handleClose}
-              />
+              <motion.div
+                initial={{ opacity: 0, scale: 0.92, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ type: "spring", stiffness: 300, damping: 24 }}
+              >
+                <SuccessCard
+                  booking={success}
+                  onNew={() => resetForm()}
+                  onClose={handleClose}
+                />
+              </motion.div>
             )}
-          </div>
+          </motion.div>
         </motion.div>
       </motion.div>
     </AnimatePresence>
