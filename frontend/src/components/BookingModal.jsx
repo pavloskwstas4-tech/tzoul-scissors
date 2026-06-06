@@ -194,7 +194,7 @@ export default function BookingModal() {
           {/* Close button */}
           <button
             onClick={handleClose}
-            className="absolute top-4 right-4 z-10 p-2 bg-black/5 hover:bg-[#1D1D1F] hover:text-white rounded-full transition-colors duration-150"
+            className="absolute top-4 right-4 z-20 p-2 bg-white border border-black/[0.10] shadow-[0_2px_8px_rgba(0,0,0,0.10)] hover:bg-[#1D1D1F] hover:text-white hover:border-transparent rounded-full transition-colors duration-150"
             data-testid="close-modal"
           >
             <X size={20} />
