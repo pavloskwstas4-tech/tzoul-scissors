@@ -131,6 +131,13 @@ body {
     transform: translateY(-1px);
 }
 
+/* ── Modal step fade (CSS only — no JS animation overhead) ─── */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.modal-step-fade { animation: fadeIn 0.16s ease both; }
+
 /* ── Ticker tape ────────────────────────── */
 @keyframes marquee {
     0%   { transform: translateX(0); }

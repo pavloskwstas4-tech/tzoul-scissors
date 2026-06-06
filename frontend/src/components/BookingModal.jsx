@@ -6,9 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast, Toaster } from "sonner";
 import { ArrowLeft, ArrowRight, Check, Loader2, Scissors, User, CalendarIcon, ClipboardList, ChevronsRight, X } from "lucide-react";
-import Magnetic from "@/components/Magnetic";
-import { useBooking } from "@/contexts/BookingContext";
 import { motion, AnimatePresence } from "framer-motion";
+import { useBooking } from "@/contexts/BookingContext";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -164,91 +163,67 @@ export default function BookingModal() {
 
   if (!isBookingOpen) return null;
 
-  // Shared stagger child variant
-  const fadeUp = {
-    hidden: { opacity: 0, y: 22 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.52, ease: [0.16, 1, 0.3, 1] } },
-  };
-
   return (
     <AnimatePresence>
-      {/* Backdrop */}
+      {/* Backdrop — solid, no blur (backdrop-blur on full overlay is very GPU heavy) */}
       <motion.div
         key="booking-backdrop"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.3, ease: "easeOut" }}
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-4"
+        transition={{ duration: 0.18 }}
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/65 p-4"
         onClick={handleClose}
       >
         <Toaster theme="light" position="top-center" />
 
-        {/* Modal card — dramatic spring entrance */}
+        {/* Modal — solid white, simple y+opacity (no scale, no backdrop-blur) */}
         <motion.div
           key="booking-card"
-          initial={{ opacity: 0, scale: 0.88, y: -32 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.94, y: 28 }}
-          transition={{ type: "spring", stiffness: 340, damping: 26, mass: 0.9 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 12 }}
+          transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
           ref={scrollRef}
-          style={{ willChange: "transform, opacity" }}
-          className="relative bg-white/96 backdrop-blur-2xl w-full max-w-5xl max-h-[92vh] overflow-y-auto overscroll-contain rounded-3xl shadow-[0_32px_80px_rgba(0,0,0,0.18),0_8px_24px_rgba(0,0,0,0.08)]"
+          className="relative bg-white w-full max-w-5xl max-h-[92vh] overflow-y-auto overscroll-contain rounded-3xl shadow-[0_24px_60px_rgba(0,0,0,0.18),0_4px_16px_rgba(0,0,0,0.08)]"
           onClick={(e) => e.stopPropagation()}
           data-testid="booking-modal"
         >
-          {/* Red accent strip — sweeps in from left */}
-          <motion.div
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ duration: 0.45, delay: 0.18, ease: [0.16, 1, 0.3, 1] }}
-            style={{ originX: 0 }}
-            className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-black/10 to-transparent rounded-t-2xl"
-          />
+          <div className="absolute top-0 left-0 right-0 h-px bg-black/[0.08] rounded-t-3xl" />
 
           {/* Close button */}
-          <motion.button
-            initial={{ opacity: 0, scale: 0.7 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3, duration: 0.25, ease: "backOut" }}
+          <button
             onClick={handleClose}
-            className="absolute top-4 right-4 z-10 p-2 bg-black/5 hover:bg-[#1D1D1F] hover:text-white hover:scale-110 active:scale-95 rounded-full transition-all duration-200"
+            className="absolute top-4 right-4 z-10 p-2 bg-black/5 hover:bg-[#1D1D1F] hover:text-white rounded-full transition-colors duration-150"
             data-testid="close-modal"
           >
             <X size={20} />
-          </motion.button>
+          </button>
 
-          {/* Staggered inner content */}
-          <motion.div
-            className="p-6 md:p-10"
-            initial="hidden"
-            animate="visible"
-            variants={{ visible: { transition: { staggerChildren: 0.09, delayChildren: 0.15 } } }}
-          >
+          <div className="p-6 md:p-10">
             {!success && (
               <>
                 {/* Header */}
-                <motion.div variants={fadeUp} className="mb-6">
+                <div className="mb-6">
                   <h2 className="title-massive text-4xl md:text-5xl">Book Now.</h2>
                   <p className="mt-2 text-[#86868B] text-sm">Complete your reservation in {STEPS.length} simple steps.</p>
-                </motion.div>
+                </div>
 
                 {/* Step tabs */}
-                <motion.div variants={fadeUp} className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-8" data-testid="booking-stepper">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-8" data-testid="booking-stepper">
                   {STEPS.map((s, i) => {
                     const Icon = s.icon;
                     const active = i === step;
                     const completed = i < step;
                     return (
-                      <motion.button
+                      <button
                         key={s.label}
                         data-testid={`step-tab-${i}`}
                         onClick={() => i < step && setStep(i)}
-                        whileHover={{ scale: completed || active ? 1 : 1.02 }}
-                        className={`flex flex-col items-start gap-1 p-3 rounded-xl transition-all ${
-                          active ? "bg-[#1D1D1F] text-white shadow-[0_4px_16px_rgba(0,0,0,0.12)]" : 
-                          completed ? "bg-[#F5F5F7] text-[#1D1D1F]" : 
-                          "bg-[#F5F5F7] text-[#A1A1A6]"
+                        className={`flex flex-col items-start gap-1 p-3 rounded-xl transition-colors duration-150 ${
+                          active   ? "bg-[#1D1D1F] text-white shadow-[0_4px_14px_rgba(0,0,0,0.12)]" :
+                          completed ? "bg-[#F5F5F7] text-[#1D1D1F]" :
+                                      "bg-[#F5F5F7] text-[#A1A1A6]"
                         }`}
                       >
                         <span className={`font-mono text-[0.6rem] uppercase tracking-wider ${active ? "text-white/60" : "text-[#A1A1A6]"}`}>
@@ -257,38 +232,20 @@ export default function BookingModal() {
                         <span className="flex items-center gap-2 font-display uppercase text-sm">
                           <Icon size={12} /> {s.label}
                         </span>
-                      </motion.button>
+                      </button>
                     );
                   })}
-                </motion.div>
+                </div>
 
-                <motion.div variants={fadeUp} className="max-w-4xl mx-auto">
+                <div className="max-w-4xl mx-auto">
                   <div className="lg:col-span-8">
-                    {/* Section heading with step-change slide animation */}
-                    <AnimatePresence mode="wait">
-                      <motion.div
-                        key={`heading-${step}`}
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
-                        transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-                        className="mb-5"
-                      >
-                        <h3 className="title-massive text-2xl md:text-3xl">
-                          {STEPS[step].heading}.
-                        </h3>
-                      </motion.div>
-                    </AnimatePresence>
+                    {/* Section heading */}
+                    <div className="mb-5">
+                      <h3 className="title-massive text-2xl md:text-3xl">{STEPS[step].heading}.</h3>
+                    </div>
 
-                    {/* Step content with slide-in/out transition */}
-                    <AnimatePresence mode="wait">
-                      <motion.div
-                        key={`step-content-${step}`}
-                        initial={{ opacity: 0, x: 30 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -30 }}
-                        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                      >
+                    {/* Step content — CSS fade only, no JS animation overhead */}
+                    <div key={step} className="modal-step-fade">
 
                     {step === 0 && (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5" data-testid="step-service">
@@ -424,62 +381,49 @@ export default function BookingModal() {
                       </div>
                     )}
 
-                      </motion.div>
-                    </AnimatePresence>
+                    </div>
                   </div>
 
-                  {/* Navigation Buttons */}
-                  <motion.div variants={fadeUp} className="flex items-center gap-3 mt-8 max-w-md mx-auto">
+                  {/* Navigation */}
+                  <div className="flex items-center gap-3 mt-8 max-w-md mx-auto">
                       <button
                         data-testid="step-back"
                         onClick={() => setStep((s) => Math.max(0, s - 1))}
                         disabled={step === 0}
-                        className="flex-1 px-4 py-3 border border-black/[0.10] rounded-xl font-display uppercase text-sm text-[#86868B] disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#F5F5F7] hover:text-[#1D1D1F] transition-all flex items-center justify-center gap-2"
+                        className="flex-1 px-4 py-3 border border-black/[0.10] rounded-xl font-display uppercase text-sm text-[#86868B] disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#F5F5F7] hover:text-[#1D1D1F] transition-colors duration-150 flex items-center justify-center gap-2"
                       >
                         <ArrowLeft size={13} /> Back
                       </button>
                       {step < 3 ? (
-                        <Magnetic strength={0.22}>
-                          <button
-                            data-testid="step-next"
-                            disabled={!canNext()}
-                            onClick={() => setStep((s) => s + 1)}
-                        className="flex-1 px-4 py-3 bg-[#1D1D1F] text-white rounded-xl font-display uppercase text-sm disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#333] transition-all shadow-[0_4px_14px_rgba(0,0,0,0.10)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.14)] hover:-translate-y-0.5 flex items-center justify-center gap-2"
-                          >
-                            Next <ArrowRight size={13} />
-                          </button>
-                        </Magnetic>
+                        <button
+                          data-testid="step-next"
+                          disabled={!canNext()}
+                          onClick={() => setStep((s) => s + 1)}
+                          className="flex-1 px-4 py-3 bg-[#1D1D1F] text-white rounded-xl font-display uppercase text-sm disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#333] transition-colors duration-150 shadow-[0_4px_14px_rgba(0,0,0,0.10)] flex items-center justify-center gap-2"
+                        >
+                          Next <ArrowRight size={13} />
+                        </button>
                       ) : (
-                        <Magnetic strength={0.22}>
-                          <button
-                            data-testid="confirm-booking"
-                            disabled={submitting || !canNext()}
-                            onClick={submit}
-                            className="flex-1 px-4 py-3 bg-[#1D1D1F] text-white rounded-xl font-display uppercase text-sm disabled:opacity-50 hover:bg-[#333] transition-all shadow-[0_4px_14px_rgba(0,0,0,0.10)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.14)] hover:-translate-y-0.5 flex items-center justify-center gap-2"
-                          >
-                            {submitting ? <><Loader2 size={13} className="animate-spin" /> Confirming…</> : <>Confirm Booking <Check size={13} /></>}
-                          </button>
-                        </Magnetic>
+                        <button
+                          data-testid="confirm-booking"
+                          disabled={submitting || !canNext()}
+                          onClick={submit}
+                          className="flex-1 px-4 py-3 bg-[#1D1D1F] text-white rounded-xl font-display uppercase text-sm disabled:opacity-50 hover:bg-[#333] transition-colors duration-150 shadow-[0_4px_14px_rgba(0,0,0,0.10)] flex items-center justify-center gap-2"
+                        >
+                          {submitting ? <><Loader2 size={13} className="animate-spin" /> Confirming…</> : <>Confirm Booking <Check size={13} /></>}
+                        </button>
                       )}
-                    </motion.div>
-                  </motion.div>
+                    </div>
+                  </div>
               </>
             )}
 
             {success && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.92, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ type: "spring", stiffness: 300, damping: 24 }}
-              >
-                <SuccessCard
-                  booking={success}
-                  onNew={() => resetForm()}
-                  onClose={handleClose}
-                />
-              </motion.div>
+              <div className="modal-step-fade">
+                <SuccessCard booking={success} onNew={() => resetForm()} onClose={handleClose} />
+              </div>
             )}
-          </motion.div>
+          </div>
         </motion.div>
       </motion.div>
     </AnimatePresence>
