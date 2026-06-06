@@ -6,7 +6,7 @@ import PageTransition from "@/components/PageTransition";
 
 export default function Layout() {
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A] overflow-x-hidden">
+    <div className="min-h-screen text-[#1D1D1F] overflow-x-hidden">
       <Nav />
       <PageTransition>
         <main>

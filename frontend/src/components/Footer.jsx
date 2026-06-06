@@ -17,7 +17,7 @@ export default function Footer() {
       <div className="max-w-[1500px] mx-auto px-5 md:px-8 pt-12 md:pt-16 pb-8">
         <div className="flex items-end justify-between flex-wrap gap-6">
           <div className="font-display leading-tight text-[18vw] md:text-[12vw] lg:text-[9rem] text-white">
-            TZOUL<span className="inline-block w-[0.18em] h-[0.18em] bg-[#38BDF8] rounded-sm align-baseline ml-2" />
+            TZOUL<span className="inline-block w-[0.18em] h-[0.18em] bg-white/30 rounded-sm align-baseline ml-2" />
           </div>
           <div className="font-mono text-[0.66rem] uppercase tracking-wider text-white/55 text-right">
             <div>Est. 2019 — Athens, GR</div>
@@ -49,7 +49,7 @@ export default function Footer() {
                 <Instagram size={13} /> @tzoulian_haircutz
               </a>
               <Magnetic strength={0.18}>
-                <button onClick={openBooking} data-testid="footer-book" className="px-3 py-1.5 bg-[#F97316] text-white rounded-lg font-display uppercase text-[0.58rem] hover:bg-[#EA580C] transition-all border border-white/20 shadow-[2px_2px_0px_rgba(255,255,255,0.2)] flex items-center gap-1">
+                <button onClick={openBooking} data-testid="footer-book" className="btn-white text-[0.62rem] px-3 py-1.5 flex items-center gap-1">
                   Book now <ArrowUpRight size={11} />
                 </button>
               </Magnetic>

@@ -42,16 +42,16 @@ export default function Home() {
 
       {/* MANIFESTO */}
       <Reveal>
-        <section id="manifesto" className="bg-[#E0F2FE] py-14 md:py-20 border-y-2 border-[#0F172A]">
+        <section id="manifesto" className="bg-[#F5F5F7] py-14 md:py-20 border-y border-black/[0.05]">
           <div className="max-w-[1500px] mx-auto px-5 md:px-8 grid grid-cols-1 md:grid-cols-12 gap-8">
             <div className="md:col-span-4 reveal">
-              <div className="mt-5 w-12 h-12 bg-[#38BDF8] border-2 border-[#0F172A] shadow-[4px_4px_0px_#0F172A] rounded-lg" />
+              <div className="mt-5 w-10 h-10 rounded-2xl bg-[#1D1D1F]/8" />
             </div>
             <div className="md:col-span-8 reveal">
               <h2 className="title-massive text-2xl md:text-4xl lg:text-5xl leading-tight">
-                It's not just a haircut<span className="text-[#38BDF8]">.</span> It's a ritual<span className="text-[#F97316]">.</span>
+                It's not just a haircut. It's a ritual.
               </h2>
-              <p className="mt-5 max-w-2xl text-slate-600 text-sm md:text-base leading-relaxed">
+              <p className="mt-5 max-w-2xl text-[#86868B] text-sm md:text-base leading-relaxed">
                 At TZOUL BARBER we fuse classic American barbering with the raw aesthetic of modern Athens.
                 Vintage chairs, hot towels, music, culture — all under a wall covered in typography.
               </p>
@@ -62,52 +62,41 @@ export default function Home() {
 
       {/* STYLE FINDER CTA */}
       <Reveal>
-        <section id="style-finder" className="py-14 md:py-20 bg-[#0F172A] text-white relative overflow-hidden" data-testid="style-finder-cta">
-          <div className="absolute inset-0 opacity-[0.07] pointer-events-none" style={{
-            backgroundImage: 'radial-gradient(circle at 20% 20%, #38BDF8 1px, transparent 1px)',
-            backgroundSize: '32px 32px',
-          }} />
+        <section id="style-finder" className="py-14 md:py-20 bg-[#1D1D1F] text-white relative overflow-hidden" data-testid="style-finder-cta">
+          <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 20% 20%, #fff 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
           <div className="max-w-[1500px] mx-auto px-5 md:px-8 relative">
             <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
               <div className="md:col-span-7 reveal">
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#38BDF8]/15 border border-[#38BDF8]/40 rounded-full mb-5">
-                  <Sparkles size={13} className="text-[#38BDF8]" />
-                  <span className="font-mono text-[0.6rem] uppercase tracking-wider text-sky-300">New · Style Finder</span>
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/10 border border-white/15 rounded-full mb-5">
+                  <Sparkles size={13} className="text-white/70" />
+                  <span className="font-mono text-[0.6rem] uppercase tracking-wider text-white/60">New · Style Finder</span>
                 </div>
                 <h2 className="title-massive text-3xl md:text-5xl lg:text-6xl leading-[0.95]">
-                  Not sure which cut suits you<span className="text-[#38BDF8]">?</span>
+                  Not sure which cut suits you?
                 </h2>
-                <p className="mt-5 max-w-xl text-white/70 text-sm md:text-base leading-relaxed">
-                  Answer 3 quick questions about your face shape, hair texture, and daily vibe — we'll match you
-                  with the cut that fits your story, plus the barber who'll nail it.
+                <p className="mt-5 max-w-xl text-white/55 text-sm md:text-base leading-relaxed">
+                  Answer 3 quick questions about your face shape, hair texture, and daily vibe — we'll match you with the cut that fits your story.
                 </p>
                 <div className="mt-7 flex flex-wrap items-center gap-3">
                   <Magnetic strength={0.25}>
-                    <button
-                      onClick={() => setStyleFinderOpen(true)}
-                      data-testid="open-style-finder"
-                      className="px-6 py-3 bg-[#F97316] text-white rounded-full font-display uppercase text-sm hover:bg-[#EA580C] transition-all border-2 border-white/30 shadow-[3px_3px_0px_rgba(255,255,255,0.2)] hover:-translate-y-0.5 flex items-center gap-2"
-                    >
+                    <button onClick={() => setStyleFinderOpen(true)} data-testid="open-style-finder"
+                      className="btn-white flex items-center gap-2">
                       <Sparkles size={13} /> Find your style
                     </button>
                   </Magnetic>
-                  <span className="font-mono text-[0.6rem] uppercase tracking-wider text-white/45">~30 seconds</span>
+                  <span className="font-mono text-[0.6rem] uppercase tracking-wider text-white/35">~30 seconds</span>
                 </div>
               </div>
               <div className="md:col-span-5 reveal">
                 <div className="grid grid-cols-3 gap-3">
-                  {[
-                    { l: "Step 01", t: "Face shape" },
-                    { l: "Step 02", t: "Hair texture" },
-                    { l: "Step 03", t: "Daily vibe" },
-                  ].map((s, i) => (
-                    <div key={s.t} className="aspect-square rounded-2xl border border-[#38BDF8]/25 bg-[#38BDF8]/10 backdrop-blur-sm p-4 flex flex-col justify-between hover:border-[#38BDF8]/70 hover:bg-[#38BDF8]/20 transition-all">
-                      <div className="font-mono text-[0.56rem] uppercase tracking-wider text-sky-400">{s.l}</div>
+                  {[{ l: "Step 01", t: "Face shape" }, { l: "Step 02", t: "Hair texture" }, { l: "Step 03", t: "Daily vibe" }].map((s, i) => (
+                    <div key={s.t} className="aspect-square rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-4 flex flex-col justify-between hover:bg-white/10 transition-all">
+                      <div className="font-mono text-[0.56rem] uppercase tracking-wider text-white/40">{s.l}</div>
                       <div>
                         <div className="font-display text-lg md:text-xl leading-tight">{s.t}</div>
-                        <div className="mt-2 w-6 h-[2px] bg-[#38BDF8]" />
+                        <div className="mt-2 w-5 h-px bg-white/30" />
                       </div>
-                      <div className="font-display text-3xl md:text-4xl text-white/15 self-end">0{i + 1}</div>
+                      <div className="font-display text-3xl md:text-4xl text-white/10 self-end">0{i + 1}</div>
                     </div>
                   ))}
                 </div>
@@ -123,7 +112,7 @@ export default function Home() {
           <div className="max-w-[1500px] mx-auto px-5 md:px-8">
             <div className="reveal flex flex-col md:flex-row md:items-end md:justify-between gap-3 mb-8">
               <div>
-                <h2 className="title-massive text-3xl md:text-5xl lg:text-6xl mt-2">Services<span className="text-[#38BDF8]">.</span></h2>
+                <h2 className="title-massive text-3xl md:text-5xl lg:text-6xl mt-2">Services.</h2>
               </div>
               <p className="text-gray-500 text-sm max-w-md">
                 All prices are indicative. Ask your barber for a personalised quote.
@@ -148,15 +137,15 @@ export default function Home() {
                           key={s.id}
                           data-testid={`svc-${s.id}`}
                           onClick={openBooking}
-                          className="group flex items-center justify-between gap-3 px-4 py-3 bg-white rounded-2xl hover:bg-sky-50 transition-all duration-300 border-2 border-[#0F172A] shadow-[3px_3px_0px_#0F172A] hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_#0F172A] cursor-pointer"
+                          className="group flex items-center justify-between gap-3 px-5 py-4 bg-white rounded-2xl hover:bg-[#F5F5F7] transition-all duration-300 border border-black/[0.06] shadow-[0_2px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_6px_24px_rgba(0,0,0,0.09)] hover:-translate-y-0.5 cursor-pointer"
                         >
                           <div className="flex flex-col min-w-0">
-                            <span className="font-body text-sm md:text-base font-medium text-gray-900 truncate group-hover:text-sky-600 transition-colors">{s.name}</span>
+                            <span className="font-body text-sm md:text-base font-medium text-[#1D1D1F] truncate group-hover:text-[#1D1D1F] transition-colors">{s.name}</span>
                             <span className="font-mono text-[0.58rem] uppercase tracking-wider text-gray-500 mt-0.5">
                               {s.duration} min
                             </span>
                           </div>
-                          <span className="font-display text-xl md:text-2xl text-sky-500 shrink-0">€{s.price}</span>
+                          <span className="font-display text-xl md:text-2xl text-[#1D1D1F] shrink-0">€{s.price}</span>
                         </div>
                       ))}
                     </div>
@@ -167,7 +156,7 @@ export default function Home() {
 
             <div className="flex justify-center pt-8 reveal">
               <Magnetic strength={0.25}>
-                <button onClick={openBooking} data-testid="services-cta" className="btn-orange flex items-center gap-2">
+                <button onClick={openBooking} data-testid="services-cta" className="btn-dark flex items-center gap-2">
                   <ChevronsRight size={13} /> Book Your Service
                 </button>
               </Magnetic>
@@ -182,7 +171,7 @@ export default function Home() {
           <div className="max-w-[1500px] mx-auto px-5 md:px-8">
             <div className="reveal flex flex-col md:flex-row md:items-end md:justify-between gap-3 mb-8">
               <div>
-                <h2 className="title-massive text-3xl md:text-5xl lg:text-6xl mt-2">On Instagram<span className="text-[#38BDF8]">.</span></h2>
+                <h2 className="title-massive text-3xl md:text-5xl lg:text-6xl mt-2">On Instagram.</h2>
                 <p className="text-gray-500 text-sm mt-2">See our latest work and transformations</p>
               </div>
               <a
@@ -247,7 +236,7 @@ export default function Home() {
           <div className="max-w-[1500px] mx-auto px-5 md:px-8">
             <div className="reveal flex flex-col md:flex-row md:items-end md:justify-between gap-3 mb-8">
               <div>
-                <h2 className="title-massive text-3xl md:text-5xl lg:text-6xl mt-2">The Plates<span className="text-[#38BDF8]">.</span></h2>
+                <h2 className="title-massive text-3xl md:text-5xl lg:text-6xl mt-2">The Plates.</h2>
               </div>
               <a
                 href="https://www.instagram.com/tzoulian_haircutz" target="_blank" rel="noreferrer"
@@ -283,19 +272,19 @@ export default function Home() {
 
             <div className="md:col-span-7 reveal space-y-7">
               <div>
-                <h2 className="title-massive text-3xl md:text-5xl lg:text-6xl mt-2">About<span className="text-[#38BDF8]">.</span></h2>
+                <h2 className="title-massive text-3xl md:text-5xl lg:text-6xl mt-2">About.</h2>
               </div>
 
               <div>
-                <h3 className="title-massive text-xl md:text-3xl mt-1">Beyond the chair<span className="text-[#F97316]">.</span></h3>
-                <p className="mt-3 text-sm md:text-base text-gray-600 max-w-2xl leading-relaxed">
+                <h3 className="title-massive text-xl md:text-3xl mt-1">Beyond the chair.</h3>
+                <p className="mt-3 text-sm md:text-base text-[#86868B] max-w-2xl leading-relaxed">
                   TZOUL BARBER was born from a love for traditional barbering and music.
                   Records on the wall, hip-hop in the air, references to Athenian street art — every corner tells a story.
                 </p>
               </div>
 
               <div>
-                <h3 className="title-massive text-xl md:text-3xl mt-1">The Philosophy<span className="text-[#F97316]">.</span></h3>
+                <h3 className="title-massive text-xl md:text-3xl mt-1">The Philosophy.</h3>
                 <p className="mt-3 text-sm md:text-base text-gray-600 max-w-2xl leading-relaxed">
                   Curated products, vintage Belmont and Takara chairs, hot towels, straight razor. No rushing.
                   Every client leaves transformed.
@@ -308,7 +297,7 @@ export default function Home() {
                     { k: "Culture",   v: "Music, art, street." },
                     { k: "Products",  v: "Curated. Premium." },
                   ].map((p) => (
-                    <div key={p.k} className="p-4 bg-white rounded-lg border-2 border-[#0F172A] shadow-[3px_3px_0px_#0F172A] hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_#0F172A] transition-all">
+                    <div key={p.k} className="p-4 bg-white rounded-2xl border border-black/[0.05] shadow-[0_2px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.08)] hover:-translate-y-0.5 transition-all">
                       <div className="font-display uppercase text-sm md:text-base">{p.k}</div>
                       <div className="font-mono text-[0.62rem] text-gray-500 mt-1">{p.v}</div>
                     </div>
@@ -326,7 +315,7 @@ export default function Home() {
           <div className="max-w-[1500px] mx-auto px-5 md:px-8">
             <div className="reveal flex flex-col md:flex-row md:items-end md:justify-between gap-3 mb-8">
               <div>
-                <h2 className="title-massive text-3xl md:text-5xl lg:text-6xl mt-2">Visit<span className="text-[#38BDF8]">.</span></h2>
+                <h2 className="title-massive text-3xl md:text-5xl lg:text-6xl mt-2">Visit.</h2>
               </div>
               <p className="text-gray-500 text-sm max-w-md">
                 Walk-ins welcome. Reservations strongly recommended.
@@ -336,10 +325,10 @@ export default function Home() {
             {biz && (
               <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6">
                 <div className="md:col-span-5 space-y-3 reveal">
-                  <ContactCard testid="contact-address" icon={<MapPin size={14} className="shrink-0 text-[#38BDF8]" />} label="Address" value={biz.address} href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(biz.address)}`} />
-                  <ContactCard testid="contact-phone"   icon={<Phone size={14} className="shrink-0 text-[#38BDF8]" />} label="Phone"   value={biz.phone}   href={`tel:${biz.phone.replace(/\s/g, "")}`} />
-                  <ContactCard testid="contact-email"   icon={<Mail size={14} className="shrink-0 text-[#38BDF8]" />} label="Email"   value={biz.email}   href={`mailto:${biz.email}`} />
-                  <ContactCard testid="contact-instagram" icon={<Instagram size={14} className="shrink-0 text-[#38BDF8]" />} label="Instagram" value="@tzoulian_haircutz" href={biz.instagram} />
+                  <ContactCard testid="contact-address" icon={<MapPin size={14} className="shrink-0 text-[#86868B]" />} label="Address" value={biz.address} href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(biz.address)}`} />
+                  <ContactCard testid="contact-phone"   icon={<Phone size={14} className="shrink-0 text-[#86868B]" />} label="Phone"   value={biz.phone}   href={`tel:${biz.phone.replace(/\s/g, "")}`} />
+                  <ContactCard testid="contact-email"   icon={<Mail size={14} className="shrink-0 text-[#86868B]" />} label="Email"   value={biz.email}   href={`mailto:${biz.email}`} />
+                  <ContactCard testid="contact-instagram" icon={<Instagram size={14} className="shrink-0 text-[#86868B]" />} label="Instagram" value="@tzoulian_haircutz" href={biz.instagram} />
 
                   <div className="rounded-xl border border-gray-200 p-5 bg-gray-50">
                     <div className="font-mono text-[0.58rem] uppercase tracking-wider text-gray-500 mb-3">Opening Hours</div>
@@ -371,12 +360,13 @@ export default function Home() {
       </Reveal>
 
       {/* CTA BAND */}
-      <section className="bg-[#38BDF8] text-[#0F172A] py-16 md:py-20 border-y-2 border-[#0F172A]" data-testid="cta-band">
+      <section className="bg-[#1D1D1F] text-white py-16 md:py-24" data-testid="cta-band">
         <div className="max-w-[1500px] mx-auto px-5 md:px-8 text-center">
-          <h2 className="title-massive text-5xl md:text-7xl lg:text-8xl leading-tight mt-3">Book the chair<span className="text-[#0F172A]/40">.</span></h2>
+          <h2 className="title-massive text-5xl md:text-7xl lg:text-8xl leading-tight mt-3 text-white">Book the chair.</h2>
+          <p className="mt-4 text-white/45 text-sm md:text-base max-w-md mx-auto">By appointment only. No walk-ins.</p>
           <div className="mt-8 inline-block">
             <Magnetic strength={0.3}>
-              <button onClick={openBooking} data-testid="cta-band-book" className="btn-orange flex items-center gap-2">
+              <button onClick={openBooking} data-testid="cta-band-book" className="btn-white flex items-center gap-2">
                 Book Appointment <ChevronsRight size={16} />
               </button>
             </Magnetic>
@@ -394,14 +384,14 @@ function ContactCard({ icon, label, value, href, testid }) {
       data-testid={testid}
       target={href.startsWith("http") ? "_blank" : undefined}
       rel="noreferrer"
-      className="rounded-xl border-2 border-[#0F172A] p-4 flex items-start gap-3 bg-white hover:bg-sky-50 transition-all group shadow-[3px_3px_0px_#0F172A] hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_#0F172A]"
+      className="rounded-2xl border border-black/[0.05] p-4 flex items-start gap-3 bg-white hover:bg-[#F5F5F7] transition-all group shadow-[0_2px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.08)] hover:-translate-y-0.5"
     >
       {icon}
       <div className="min-w-0 flex-1">
         <div className="font-mono text-[0.58rem] uppercase tracking-wider text-gray-500">{label}</div>
         <div className="font-display uppercase text-base mt-1 truncate text-gray-900">{value}</div>
       </div>
-      <ArrowUpRight size={14} className="shrink-0 text-gray-400 group-hover:text-sky-500 transition-colors" />
+      <ArrowUpRight size={14} className="shrink-0 text-[#A1A1A6] group-hover:text-[#1D1D1F] transition-colors" />
     </a>
   );
 }
@@ -414,50 +404,28 @@ function ContactCard({ icon, label, value, href, testid }) {
  * Streetwear / drop-page energy.
  * ------------------------------------------------------------------------- */
 function HeroSection({ services, barbers, openBooking }) {
-  void services;
-  void barbers;
+  void services; void barbers;
 
-  const tickerWords = [
-    "BARBER",
-    "ATHENS",
-    "HERAKLION",
-    "EST. 2019",
-    "NO. 526",
-    "TZOUL",
-    "BY APPOINTMENT",
-    "TRADITION × STREET",
-  ];
+  const tickerWords = ["BARBER","ATHENS","HERAKLION","EST. 2019","NO. 526","TZOUL","BY APPOINTMENT","TRADITION × STREET"];
 
   return (
-    <section
-      id="hero"
-      data-testid="hero"
-      className="relative bg-[#F8FAFC] text-[#0F172A] overflow-hidden min-h-[100svh] flex flex-col"
-    >
-      {/* Subtle dot grid */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.035]"
-        style={{
-          backgroundImage: "radial-gradient(circle, #0F172A 1px, transparent 1px)",
-          backgroundSize: "28px 28px",
-        }}
-      />
+    <section id="hero" data-testid="hero" className="relative bg-white overflow-hidden min-h-[100svh] flex flex-col">
+      {/* Very subtle noise */}
+      <div className="pointer-events-none absolute inset-0 opacity-[0.018]"
+        style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")", backgroundSize: "200px" }} />
 
-      {/* Soft blue glow */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#38BDF8]/12 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-40 left-[-60px] w-[320px] h-[320px] bg-[#F97316]/08 rounded-full blur-[90px] pointer-events-none" />
+      {/* Soft gradient orb */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-gradient-radial from-gray-100/60 to-transparent rounded-full blur-3xl pointer-events-none" />
 
-      {/* Top corner labels */}
+      {/* Corner labels */}
       <div className="relative z-10 pt-28 md:pt-32 px-5 md:px-10">
         <div className="max-w-[1500px] mx-auto flex items-start justify-between">
-          <div className="font-mono text-[0.6rem] uppercase tracking-[0.32em] text-[#0F172A]/40">
-            <span className="text-[#38BDF8]">"</span>TZOUL<span className="text-[#38BDF8]">"</span>{" "}
-            <span className="opacity-50">/</span> VOL.&nbsp;01 / DROP&nbsp;A
+          <div className="font-mono text-[0.58rem] uppercase tracking-[0.32em] text-[#86868B]">
+            "TZOUL" / VOL. 01 / DROP A
           </div>
-          <div className="hidden md:block font-mono text-[0.6rem] uppercase tracking-[0.32em] text-[#0F172A]/40 text-right">
-            FOR <span className="text-[#38BDF8]">PRIVATE</span> APPOINTMENT
-            <br />
-            <span className="opacity-60">SCHEDULED · NOT WALKED-IN</span>
+          <div className="hidden md:block font-mono text-[0.58rem] uppercase tracking-[0.32em] text-[#86868B] text-right">
+            FOR PRIVATE APPOINTMENT<br />
+            <span className="opacity-70">SCHEDULED · NOT WALKED-IN</span>
           </div>
         </div>
       </div>
@@ -465,49 +433,30 @@ function HeroSection({ services, barbers, openBooking }) {
       {/* MASSIVE wordmark */}
       <div className="relative z-10 flex-1 flex items-center justify-center px-5 md:px-10">
         <div className="w-full">
-          <h1
-            data-testid="hero-title"
-            className="font-display font-black uppercase text-[#0F172A] text-center leading-[0.78]"
-            style={{
-              fontFamily: "'Outfit', 'Archivo Black', sans-serif",
-              fontSize: "clamp(7rem, 28vw, 26rem)",
-              letterSpacing: "-0.045em",
-            }}
-          >
+          <h1 data-testid="hero-title"
+            className="font-display font-black uppercase text-[#1D1D1F] text-center leading-[0.82]"
+            style={{ fontFamily: "'Outfit', sans-serif", fontSize: "clamp(7rem, 28vw, 26rem)", letterSpacing: "-0.045em" }}>
             TZOUL
-            <span
-              aria-hidden="true"
-              className="align-top text-[#38BDF8] font-mono"
-              style={{ fontSize: "0.18em", marginLeft: "0.05em", letterSpacing: "0.05em" }}
-            >
-              ®
-            </span>
+            <span aria-hidden="true" className="align-top text-[#86868B] font-mono"
+              style={{ fontSize: "0.18em", marginLeft: "0.05em", letterSpacing: "0.05em" }}>®</span>
           </h1>
-
-          {/* Sublabel */}
-          <div className="mt-3 md:mt-5 flex items-center justify-center gap-3 font-mono text-[0.65rem] md:text-xs uppercase tracking-[0.45em] text-[#0F172A]/50">
-            <span className="inline-block w-8 md:w-16 h-px bg-[#0F172A]/20" />
-            <span>
-              <span className="text-[#38BDF8]">"</span>BARBER · ATHENS
-              <span className="text-[#38BDF8]">"</span>
-            </span>
-            <span className="inline-block w-8 md:w-16 h-px bg-[#0F172A]/20" />
+          <div className="mt-3 md:mt-5 flex items-center justify-center gap-4 font-mono text-[0.62rem] md:text-xs uppercase tracking-[0.42em] text-[#86868B]">
+            <span className="inline-block w-10 md:w-16 h-px bg-[#1D1D1F]/10" />
+            BARBER · ATHENS
+            <span className="inline-block w-10 md:w-16 h-px bg-[#1D1D1F]/10" />
           </div>
         </div>
       </div>
 
-      {/* Ticker tape — baby blue */}
-      <div className="relative z-10 border-y-2 border-[#0F172A] bg-[#38BDF8] overflow-hidden py-4 md:py-5">
+      {/* Ticker — monochrome */}
+      <div className="relative z-10 border-y border-black/[0.06] bg-[#F5F5F7] overflow-hidden py-4 md:py-5">
         <div className="marquee-track">
           {Array.from({ length: 4 }).map((_, idx) => (
             <div key={idx} className="flex items-center gap-10 shrink-0">
               {tickerWords.map((w, i) => (
-                <span
-                  key={`${idx}-${i}`}
-                  className="font-display uppercase text-2xl md:text-4xl tracking-tight whitespace-nowrap flex items-center gap-10 text-[#0F172A]"
-                >
+                <span key={`${idx}-${i}`} className="font-display uppercase text-2xl md:text-4xl tracking-tight whitespace-nowrap flex items-center gap-10 text-[#1D1D1F]">
                   {w}
-                  <span className="inline-block w-1.5 h-1.5 bg-[#0F172A] rotate-45" />
+                  <span className="inline-block w-1 h-1 rounded-full bg-[#86868B]" />
                 </span>
               ))}
             </div>
@@ -518,22 +467,15 @@ function HeroSection({ services, barbers, openBooking }) {
       {/* Bottom row */}
       <div className="relative z-10 px-5 md:px-10 pb-6 md:pb-8 pt-5">
         <div className="max-w-[1500px] mx-auto flex items-end justify-between gap-4">
-          <div className="font-mono text-[0.58rem] uppercase tracking-[0.32em] text-[#0F172A]/35 leading-relaxed">
-            © 2026 TZOUL <span className="text-[#38BDF8]">/</span> NO. 526 IRAKLEIOU
+          <div className="font-mono text-[0.56rem] uppercase tracking-[0.28em] text-[#A1A1A6] leading-relaxed">
+            © 2026 TZOUL / NO. 526 IRAKLEIOU
             <br className="hidden md:inline" />
             <span className="hidden md:inline">★ 4.8 · 90 REVIEWS</span>
           </div>
-
           <Magnetic strength={0.3}>
-            <button
-              data-testid="hero-book-btn"
-              onClick={openBooking}
-              className="group relative inline-flex items-center gap-3 px-6 py-3 rounded-full font-mono text-[0.7rem] uppercase tracking-[0.24em] text-white transition-all bg-[#F97316] border-2 border-[#0F172A] shadow-[4px_4px_0px_#0F172A] hover:-translate-y-1 hover:shadow-[6px_6px_0px_#0F172A] active:translate-y-0 active:shadow-[2px_2px_0px_#0F172A]"
-            >
-              <span
-                className="inline-block w-1.5 h-1.5 bg-white rounded-full"
-                aria-hidden="true"
-              />
+            <button data-testid="hero-book-btn" onClick={openBooking}
+              className="btn-dark group flex items-center gap-3 px-6 py-3">
+              <span className="inline-block w-1.5 h-1.5 bg-white/60 rounded-full" aria-hidden="true" />
               Book
               <ArrowRight size={13} className="transition-transform group-hover:translate-x-1" />
             </button>

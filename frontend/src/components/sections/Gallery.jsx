@@ -12,40 +12,28 @@ const TILES = [
 
 export default function Gallery() {
   return (
-    <section id="gallery" data-testid="gallery-section" className="bg-white py-28 md:py-40 border-t-2 border-[#0F172A]">
+    <section id="gallery" data-testid="gallery-section" className="bg-white py-28 md:py-40">
       <Reveal>
         <div className="max-w-[1500px] mx-auto px-6 md:px-10">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-14 reveal">
             <div>
               <p className="eyebrow">— Plates</p>
-              <h2 className="font-display text-5xl md:text-7xl tracking-tighter leading-[0.92] mt-3 text-[#0F172A]">
-                The <span className="text-[#38BDF8]">house</span>, in still life.
+              <h2 className="font-display text-5xl md:text-7xl tracking-tighter leading-[0.92] mt-3 text-[#1D1D1F]">
+                The house, in still life.
               </h2>
             </div>
-            <a
-              href="https://www.instagram.com/athbarberclub"
-              target="_blank"
-              rel="noreferrer"
-              data-testid="gallery-instagram-link"
-              className="eyebrow hover:text-[#38BDF8] transition-colors text-slate-500"
-            >
+            <a href="https://www.instagram.com/athbarberclub" target="_blank" rel="noreferrer"
+              data-testid="gallery-instagram-link" className="eyebrow hover:text-[#1D1D1F] transition-colors">
               @athbarberclub →
             </a>
           </div>
 
-          <div className="grid grid-cols-12 gap-4 md:gap-6 auto-rows-[180px] md:auto-rows-[220px]">
+          <div className="grid grid-cols-12 gap-4 md:gap-5 auto-rows-[180px] md:auto-rows-[220px]">
             {TILES.map((t, i) => (
-              <div
-                key={i}
-                data-testid={`gallery-tile-${i}`}
-                className={`col-span-12 ${t.span} tile reveal relative bg-slate-100 rounded-xl border-2 border-[#0F172A] overflow-hidden shadow-[4px_4px_0px_#0F172A] hover:-translate-y-1 hover:shadow-[6px_6px_0px_#0F172A] transition-all`}
-              >
-                <img
-                  src={t.src}
-                  alt={t.alt}
-                  className="w-full h-full object-cover"
-                />
-                <span className="absolute bottom-3 left-3 font-mono text-[0.6rem] uppercase tracking-wider text-white bg-[#0F172A] px-2 py-1 rounded">Plate · {String(i + 1).padStart(2, "0")}</span>
+              <div key={i} data-testid={`gallery-tile-${i}`}
+                className={`col-span-12 ${t.span} tile reveal relative bg-[#ECECEE] rounded-2xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.06)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.10)] hover:-translate-y-1 transition-all duration-500`}>
+                <img src={t.src} alt={t.alt} className="w-full h-full object-cover" />
+                <span className="absolute bottom-3 left-3 font-mono text-[0.58rem] uppercase tracking-wider text-white/90 bg-black/30 backdrop-blur-sm px-2 py-0.5 rounded-full">Plate · {String(i + 1).padStart(2, "0")}</span>
               </div>
             ))}
           </div>

@@ -53,7 +53,7 @@ module.exports = {
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
   			},
-  			ink: '#0F172A',
+  			ink: '#1D1D1F',
   			'brand-blue': '#38BDF8',
   			'brand-orange': '#F97316',
   			'brand-bg': '#F8FAFC',

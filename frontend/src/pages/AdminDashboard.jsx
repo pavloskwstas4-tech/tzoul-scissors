@@ -70,7 +70,7 @@ export default function AdminDashboard() {
 
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="rounded-2xl overflow-hidden shadow-lg border border-gray-200 bg-gradient-to-br from-[#38BDF8] to-[#0284C7] text-white p-6 md:p-8 flex items-center justify-between mb-8">
+        <div className="rounded-2xl overflow-hidden shadow-lg border border-gray-200 bg-gradient-to-br from-[#1D1D1F] to-[#333] text-white p-6 md:p-8 flex items-center justify-between mb-8">
           <div>
             <h1 className="title-massive text-3xl md:text-5xl" data-testid="admin-dashboard-title">
               Admin Dashboard<span className="text-white/80">.</span>
@@ -102,7 +102,7 @@ export default function AdminDashboard() {
               onClick={() => setActiveTab(tab.id)}
               className={`px-6 py-3 rounded-xl font-display uppercase text-sm transition-all whitespace-nowrap flex items-center gap-2 ${
                 activeTab === tab.id
-                  ? "bg-[#38BDF8] text-[#0F172A] shadow-lg"
+                  ? "bg-[#1D1D1F] text-white shadow-[0_4px_14px_rgba(0,0,0,0.10)]"
                   : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"
               }`}
             >
@@ -115,7 +115,7 @@ export default function AdminDashboard() {
         {/* Content */}
         {loading ? (
           <div className="p-12 text-center bg-white rounded-2xl">
-            <Loader2 size={32} className="animate-spin mx-auto text-sky-500" />
+            <Loader2 size={32} className="animate-spin mx-auto text-[#A1A1A6]" />
             <p className="mt-4 text-gray-500">Loading...</p>
           </div>
         ) : (
@@ -217,7 +217,7 @@ function InstagramTab({ token, onRefresh }) {
   };
 
   if (loading) {
-    return <div className="text-center py-12"><Loader2 size={32} className="animate-spin mx-auto text-sky-500" /></div>;
+    return <div className="text-center py-12"><Loader2 size={32} className="animate-spin mx-auto text-[#A1A1A6]" /></div>;
   }
 
   return (
@@ -260,7 +260,7 @@ function InstagramTab({ token, onRefresh }) {
         <DialogContent className="bg-white rounded-2xl border border-gray-200 shadow-2xl max-w-2xl">
           <DialogHeader>
             <DialogTitle className="title-massive text-2xl">
-              {isCreating ? "Add" : "Edit"} Instagram Post<span className="text-sky-500">.</span>
+              {isCreating ? "Add" : "Edit"} Instagram Post<span className="text-[#86868B]">.</span>
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 mt-4">
@@ -347,7 +347,7 @@ function OverviewTab({ bookings, services, barbers, totalRevenue, todayBookings 
 
       {/* Today's Schedule */}
       <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
-        <h3 className="title-massive text-2xl mb-4">Today's Appointments<span className="text-sky-500">.</span></h3>
+        <h3 className="title-massive text-2xl mb-4">Today's Appointments<span className="text-[#86868B]">.</span></h3>
         {todayBookings.length === 0 ? (
           <p className="text-center text-gray-500 py-8">No appointments for today</p>
         ) : (
@@ -360,7 +360,7 @@ function OverviewTab({ bookings, services, barbers, totalRevenue, todayBookings 
                   <div className="text-sm text-gray-600">{booking.service_name} • {booking.barber_name}</div>
                 </div>
                 <div className="text-right">
-                  <div className="font-display text-lg text-sky-500">€{booking.price}</div>
+                  <div className="font-display text-lg text-[#86868B]">€{booking.price}</div>
                   <div className="text-xs text-gray-500">{booking.duration} min</div>
                 </div>
               </div>
@@ -372,7 +372,7 @@ function OverviewTab({ bookings, services, barbers, totalRevenue, todayBookings 
       {/* Popular Services */}
       <div className="grid md:grid-cols-2 gap-6">
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
-          <h3 className="title-massive text-xl mb-4">Top Services<span className="text-sky-500">.</span></h3>
+          <h3 className="title-massive text-xl mb-4">Top Services<span className="text-[#86868B]">.</span></h3>
           <div className="space-y-3">
             {topServices.map(([service, count], idx) => (
               <div key={service} className="flex items-center gap-3">
@@ -390,7 +390,7 @@ function OverviewTab({ bookings, services, barbers, totalRevenue, todayBookings 
         </div>
 
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
-          <h3 className="title-massive text-xl mb-4">Quick Stats<span className="text-sky-500">.</span></h3>
+          <h3 className="title-massive text-xl mb-4">Quick Stats<span className="text-[#86868B]">.</span></h3>
           <div className="space-y-4">
             <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
               <span className="text-sm text-gray-600">Active Barbers</span>
@@ -448,7 +448,7 @@ function DailyScheduleTab({ bookings, barbers, services, token, onRefresh }) {
       <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
         <div className="flex items-center justify-between mb-6">
           <h3 className="title-massive text-2xl">
-            {barbers.find(b => b.id === selectedBarber)?.name}'s Schedule<span className="text-sky-500">.</span>
+            {barbers.find(b => b.id === selectedBarber)?.name}'s Schedule<span className="text-[#86868B]">.</span>
           </h3>
           <div className="text-sm text-gray-600">
             {dayBookings.length} appointments • €{dayBookings.reduce((sum, b) => sum + b.price, 0)} revenue
@@ -462,7 +462,7 @@ function DailyScheduleTab({ bookings, barbers, services, token, onRefresh }) {
               <div key={slot} className="flex items-stretch gap-3">
                 <div className="w-20 py-3 font-mono text-sm text-gray-600 flex items-center">{slot}</div>
                 {booking ? (
-                  <div className="flex-1 p-4 bg-gradient-to-r from-[#38BDF8] to-[#0284C7] text-white rounded-lg border-2 border-[#E63329] shadow-md">
+                  <div className="flex-1 p-4 bg-gradient-to-r from-[#1D1D1F] to-[#333] text-white rounded-lg border-2 border-[#E63329] shadow-md">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="font-display uppercase text-base font-bold">{booking.name}</div>
@@ -563,10 +563,10 @@ function BookingsTab({ bookings, token, onRefresh }) {
                       <span className={`px-3 py-1 text-xs uppercase font-mono tracking-wider rounded-full ${booking.status === "confirmed" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>{booking.status}</span>
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
-                      <div className="flex items-center gap-2 text-gray-600"><Scissors size={14} className="text-sky-500" />{booking.service_name}</div>
-                      <div className="flex items-center gap-2 text-gray-600"><User size={14} className="text-sky-500" />{booking.barber_name}</div>
-                      <div className="flex items-center gap-2 text-gray-600"><Calendar size={14} className="text-sky-500" />{booking.date}</div>
-                      <div className="flex items-center gap-2 text-gray-600"><Clock size={14} className="text-sky-500" />{booking.time}</div>
+                      <div className="flex items-center gap-2 text-gray-600"><Scissors size={14} className="text-[#86868B]" />{booking.service_name}</div>
+                      <div className="flex items-center gap-2 text-gray-600"><User size={14} className="text-[#86868B]" />{booking.barber_name}</div>
+                      <div className="flex items-center gap-2 text-gray-600"><Calendar size={14} className="text-[#86868B]" />{booking.date}</div>
+                      <div className="flex items-center gap-2 text-gray-600"><Clock size={14} className="text-[#86868B]" />{booking.time}</div>
                     </div>
                   </div>
                   {booking.status === "confirmed" && (
@@ -584,7 +584,7 @@ function BookingsTab({ bookings, token, onRefresh }) {
 
       <Dialog open={!!editingBooking} onOpenChange={() => setEditingBooking(null)}>
         <DialogContent className="bg-white rounded-2xl border border-gray-200 shadow-2xl">
-          <DialogHeader><DialogTitle className="title-massive text-2xl">Edit Booking<span className="text-sky-500">.</span></DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle className="title-massive text-2xl">Edit Booking<span className="text-[#86868B]">.</span></DialogTitle></DialogHeader>
           <div className="space-y-4 mt-4">
             <div><Label className="font-mono text-xs uppercase tracking-wider text-gray-600">Date</Label><Input type="date" value={editDate} onChange={(e) => setEditDate(e.target.value)} className="mt-2 border border-gray-200 rounded-lg" /></div>
             <div><Label className="font-mono text-xs uppercase tracking-wider text-gray-600">Time</Label><Input type="time" value={editTime} onChange={(e) => setEditTime(e.target.value)} className="mt-2 border border-gray-200 rounded-lg" /></div>
@@ -667,7 +667,7 @@ function ServicesTab({ services, token, onRefresh }) {
                 <p className="text-gray-600 text-sm mb-3">{service.description}</p>
                 <div className="flex gap-4 text-sm">
                   <span className="text-gray-500">Duration: <strong>{service.duration} min</strong></span>
-                  <span className="text-sky-500 font-display text-lg">€{service.price}</span>
+                  <span className="text-[#86868B] font-display text-lg">€{service.price}</span>
                 </div>
               </div>
               <div className="flex gap-2">
@@ -681,7 +681,7 @@ function ServicesTab({ services, token, onRefresh }) {
 
       <Dialog open={isCreating || !!editingService} onOpenChange={() => { setIsCreating(false); setEditingService(null); }}>
         <DialogContent className="bg-white rounded-2xl border border-gray-200 shadow-2xl max-w-2xl">
-          <DialogHeader><DialogTitle className="title-massive text-2xl">{isCreating ? "Create" : "Edit"} Service<span className="text-sky-500">.</span></DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle className="title-massive text-2xl">{isCreating ? "Create" : "Edit"} Service<span className="text-[#86868B]">.</span></DialogTitle></DialogHeader>
           <div className="space-y-4 mt-4">
             <div><Label>Name</Label><Input value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="mt-2" /></div>
             <div className="grid grid-cols-2 gap-4">
@@ -794,7 +794,7 @@ function BarbersTab({ barbers, services, token, onRefresh }) {
 
       <Dialog open={isCreating || !!editingBarber} onOpenChange={() => { setIsCreating(false); setEditingBarber(null); }}>
         <DialogContent className="bg-white rounded-2xl border border-gray-200 shadow-2xl max-w-2xl">
-          <DialogHeader><DialogTitle className="title-massive text-2xl">{isCreating ? "Add" : "Edit"} Barber<span className="text-sky-500">.</span></DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle className="title-massive text-2xl">{isCreating ? "Add" : "Edit"} Barber<span className="text-[#86868B]">.</span></DialogTitle></DialogHeader>
           <div className="space-y-4 mt-4">
             <div><Label>Name</Label><Input value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="mt-2" /></div>
             <div><Label>Role</Label><Input value={formData.role} onChange={(e) => setFormData({ ...formData, role: e.target.value })} className="mt-2" placeholder="e.g. Master Barber, Founder" /></div>
@@ -807,7 +807,7 @@ function BarbersTab({ barbers, services, token, onRefresh }) {
                 <button
                   type="button"
                   onClick={selectAllServices}
-                  className="text-xs font-mono uppercase tracking-wider text-sky-500 hover:underline"
+                  className="text-xs font-mono uppercase tracking-wider text-[#86868B] hover:underline"
                   data-testid="barber-all-services"
                 >
                   All services
@@ -854,7 +854,7 @@ function BarbersTab({ barbers, services, token, onRefresh }) {
 
 function StatCard({ label, value, icon, color = "red" }) {
   const colors = {
-    red: "text-sky-500",
+    red: "text-[#86868B]",
     green: "text-green-600",
     blue: "text-blue-600",
     purple: "text-purple-600"
@@ -976,7 +976,7 @@ function SchedulesTab({ barbers, token }) {
     <div className="space-y-6" data-testid="schedules-tab">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="title-massive text-3xl">Availability<span className="text-sky-500">.</span></h2>
+          <h2 className="title-massive text-3xl">Availability<span className="text-[#86868B]">.</span></h2>
           <p className="text-sm text-gray-500 mt-1">Pick a barber and a date to manage time slots.</p>
         </div>
         <span className={`text-xs font-mono uppercase tracking-wider px-3 py-1.5 rounded-full ${isDefault ? "bg-blue-50 text-blue-700" : "bg-green-50 text-green-700"}`}>
