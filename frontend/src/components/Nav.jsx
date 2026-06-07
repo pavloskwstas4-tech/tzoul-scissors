@@ -42,7 +42,7 @@ export default function Nav() {
   };
 
   return (
-    <header data-testid="site-nav" className="sticky top-0 z-50 bg-black/90 backdrop-blur-2xl border-b border-white/[0.08] shadow-[0_1px_12px_rgba(0,0,0,0.3)]">
+    <header data-testid="site-nav" className="sticky top-0 z-50 bg-black border-b border-white/[0.06]">
       <div className="max-w-[1500px] mx-auto px-5 md:px-8 h-16 flex items-center justify-between gap-4">
         {/* Brand */}
         <a href="/#hero" onClick={goToSection("hero")} data-testid="brand-logo" className="flex items-center gap-3 shrink-0 group">
