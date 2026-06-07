@@ -241,12 +241,6 @@ export default function StyleFinder({ open, onClose }) {
             {/* Quiz questions */}
             {!result && (
               <div key={step} className="modal-step-fade">
-                <div className="flex items-center gap-2 mb-2">
-                  <Sparkles size={16} className="text-[#86868B]" />
-                  <span className="font-mono text-[0.66rem] uppercase tracking-wider text-[#86868B]">
-                    Style Finder · Question {step + 1} / 3
-                  </span>
-                </div>
                 <h2 className="title-massive text-3xl md:text-5xl">
                   {step === 0 && "What is your face shape?"}
                   {step === 1 && "How would you describe your hair?"}
