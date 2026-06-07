@@ -42,15 +42,15 @@ export default function Nav() {
   };
 
   return (
-    <header data-testid="site-nav" className="sticky top-0 z-50 bg-white/80 backdrop-blur-2xl border-b border-black/[0.06] shadow-[0_1px_12px_rgba(0,0,0,0.04)]">
+    <header data-testid="site-nav" className="sticky top-0 z-50 bg-black/90 backdrop-blur-2xl border-b border-white/[0.08] shadow-[0_1px_12px_rgba(0,0,0,0.3)]">
       <div className="max-w-[1500px] mx-auto px-5 md:px-8 h-16 flex items-center justify-between gap-4">
         {/* Brand */}
         <a href="/#hero" onClick={goToSection("hero")} data-testid="brand-logo" className="flex items-center gap-3 shrink-0 group">
-          <span className="font-display text-2xl md:text-3xl leading-none relative">
+          <span className="font-display text-2xl md:text-3xl leading-none text-white relative">
             TZOUL
-            <sup className="font-mono text-[0.36rem] align-super ml-1 text-[#86868B]">®</sup>
+            <sup className="font-mono text-[0.36rem] align-super ml-1 text-white/40">®</sup>
           </span>
-          <span className="hidden md:inline font-mono text-[0.6rem] uppercase tracking-wider text-gray-500 border-l border-gray-200 pl-3">
+          <span className="hidden md:inline font-mono text-[0.6rem] uppercase tracking-wider text-white/40 border-l border-white/20 pl-3">
             BARBER / ATHENS
           </span>
         </a>
@@ -65,9 +65,9 @@ export default function Nav() {
                 href={`/#${l.id}`}
                 onClick={goToSection(l.id)}
                 data-testid={`nav-link-${l.id}`}
-                className={`group flex items-center gap-2 transition-colors ${isActive ? "text-[#1D1D1F]" : "text-[#86868B] hover:text-[#1D1D1F]"}`}
+                className={`group flex items-center gap-2 transition-colors ${isActive ? "text-white" : "text-white/45 hover:text-white"}`}
               >
-                <span className="font-mono text-[0.6rem] text-gray-400">{l.num}</span>
+                <span className="font-mono text-[0.6rem] text-white/30">{l.num}</span>
                 <span className={`font-display text-xs tracking-wide uppercase ${isActive ? "font-semibold" : ""}`}>
                   {l.label}
                 </span>
@@ -79,13 +79,13 @@ export default function Nav() {
         {/* Right */}
         <div className="flex items-center gap-3 shrink-0">
           <Magnetic strength={0.2}>
-            <button onClick={openBooking} data-testid="nav-book-btn" className="btn-dark text-xs flex items-center gap-1.5 px-4 py-2">
+            <button onClick={openBooking} data-testid="nav-book-btn" className="bg-white text-[#1D1D1F] hover:bg-white/90 transition-colors text-xs flex items-center gap-1.5 px-4 py-2 rounded-full font-display uppercase">
               <ChevronsRight size={12} /> Book now
             </button>
           </Magnetic>
           <button
             data-testid="mobile-menu-btn"
-            className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            className="lg:hidden p-2 rounded-lg hover:bg-white/10 transition-colors text-white"
             onClick={() => setOpen((v) => !v)}
             aria-label="Toggle menu"
           >
@@ -95,7 +95,7 @@ export default function Nav() {
       </div>
 
       {open && (
-        <div data-testid="mobile-drawer" className="lg:hidden border-t border-gray-200 bg-white">
+        <div data-testid="mobile-drawer" className="lg:hidden border-t border-white/10 bg-black">
           <div className="px-5 py-5 flex flex-col gap-2">
             {NAV_LINKS.map((l) => {
               const isActive = loc.pathname === "/" && active === l.id;
@@ -105,14 +105,14 @@ export default function Nav() {
                   href={`/#${l.id}`}
                   onClick={goToSection(l.id)}
                   data-testid={`mobile-nav-${l.id}`}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive ? "bg-[#1D1D1F] text-white" : "hover:bg-black/5 text-[#1D1D1F]"}`}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive ? "bg-white text-[#1D1D1F]" : "hover:bg-white/10 text-white"}`}
                 >
-                  <span className={`font-mono text-[0.58rem] ${isActive ? "text-white/70" : "text-gray-400"}`}>{l.num}</span>
+                  <span className={`font-mono text-[0.58rem] ${isActive ? "text-[#1D1D1F]/50" : "text-white/40"}`}>{l.num}</span>
                   <span className="font-display uppercase text-base">{l.label}</span>
                 </a>
               );
             })}
-            <button onClick={openBooking} data-testid="mobile-book-btn" className="btn-dark mt-2 w-full flex items-center justify-center gap-2">
+            <button onClick={openBooking} data-testid="mobile-book-btn" className="bg-white text-[#1D1D1F] mt-2 w-full flex items-center justify-center gap-2 py-3 rounded-xl font-display uppercase text-sm">
               <ChevronsRight size={12} /> Book Appointment
             </button>
           </div>
