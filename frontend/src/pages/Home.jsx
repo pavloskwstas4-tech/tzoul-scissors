@@ -450,22 +450,6 @@ function HeroSection({ services, barbers, openBooking }) {
         </div>
       </div>
 
-      {/* Ticker */}
-      <div className="relative z-10 border-y border-white/10 bg-white/5 overflow-hidden py-4 md:py-5">
-        <div className="marquee-track">
-          {Array.from({ length: 4 }).map((_, idx) => (
-            <div key={idx} className="flex items-center gap-10 shrink-0">
-              {tickerWords.map((w, i) => (
-                <span key={`${idx}-${i}`} className="font-display uppercase text-2xl md:text-4xl tracking-tight whitespace-nowrap flex items-center gap-10 text-white">
-                  {w}
-                  <span className="inline-block w-1 h-1 rounded-full bg-white/40" />
-                </span>
-              ))}
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* Bottom row */}
       <div className="relative z-10 px-5 md:px-10 pb-6 md:pb-8 pt-5">
         <div className="max-w-[1500px] mx-auto flex items-end justify-between gap-4">
