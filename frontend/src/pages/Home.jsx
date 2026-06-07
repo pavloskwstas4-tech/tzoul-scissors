@@ -405,21 +405,27 @@ function HeroSection({ services, barbers, openBooking }) {
   const tickerWords = ["BARBER","ATHENS","HERAKLION","EST. 2019","NO. 526","TZOUL","BY APPOINTMENT","TRADITION × STREET"];
 
   return (
-    <section id="hero" data-testid="hero" className="relative bg-white overflow-hidden min-h-[100svh] flex flex-col">
-      {/* Very subtle noise */}
-      <div className="pointer-events-none absolute inset-0 opacity-[0.018]"
-        style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")", backgroundSize: "200px" }} />
-
-      {/* Soft gradient orb */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-gradient-radial from-gray-100/60 to-transparent rounded-full blur-3xl pointer-events-none" />
+    <section id="hero" data-testid="hero" className="relative bg-black overflow-hidden min-h-[100svh] flex flex-col">
+      {/* Background video */}
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover"
+      >
+        <source src="https://customer-assets.emergentagent.com/job_tzoul-build-1/artifacts/9yz25ow3_Metallic_hair_cutting_scissor_ro%E2%80%A6_202606071856.mp4" type="video/mp4" />
+      </video>
+      {/* Dark overlay so text stays readable */}
+      <div className="absolute inset-0 bg-black/55" />
 
       {/* Corner labels */}
       <div className="relative z-10 pt-28 md:pt-32 px-5 md:px-10">
         <div className="max-w-[1500px] mx-auto flex items-start justify-between">
-          <div className="font-mono text-[0.58rem] uppercase tracking-[0.32em] text-[#86868B]">
+          <div className="font-mono text-[0.58rem] uppercase tracking-[0.32em] text-white/50">
             "TZOUL" / VOL. 01 / DROP A
           </div>
-          <div className="hidden md:block font-mono text-[0.58rem] uppercase tracking-[0.32em] text-[#86868B] text-right">
+          <div className="hidden md:block font-mono text-[0.58rem] uppercase tracking-[0.32em] text-white/50 text-right">
             FOR PRIVATE APPOINTMENT<br />
             <span className="opacity-70">SCHEDULED · NOT WALKED-IN</span>
           </div>
@@ -430,29 +436,29 @@ function HeroSection({ services, barbers, openBooking }) {
       <div className="relative z-10 flex-1 flex items-center justify-center px-5 md:px-10">
         <div className="w-full">
           <h1 data-testid="hero-title"
-            className="font-display font-black uppercase text-[#1D1D1F] text-center leading-[0.82]"
+            className="font-display font-black uppercase text-white text-center leading-[0.82]"
             style={{ fontFamily: "'Outfit', sans-serif", fontSize: "clamp(7rem, 28vw, 26rem)", letterSpacing: "-0.045em" }}>
             TZOUL
-            <span aria-hidden="true" className="align-top text-[#86868B] font-mono"
+            <span aria-hidden="true" className="align-top text-white/40 font-mono"
               style={{ fontSize: "0.18em", marginLeft: "0.05em", letterSpacing: "0.05em" }}>®</span>
           </h1>
-          <div className="mt-3 md:mt-5 flex items-center justify-center gap-4 font-mono text-[0.62rem] md:text-xs uppercase tracking-[0.42em] text-[#86868B]">
-            <span className="inline-block w-10 md:w-16 h-px bg-[#1D1D1F]/10" />
+          <div className="mt-3 md:mt-5 flex items-center justify-center gap-4 font-mono text-[0.62rem] md:text-xs uppercase tracking-[0.42em] text-white/50">
+            <span className="inline-block w-10 md:w-16 h-px bg-white/20" />
             BARBER · ATHENS
-            <span className="inline-block w-10 md:w-16 h-px bg-[#1D1D1F]/10" />
+            <span className="inline-block w-10 md:w-16 h-px bg-white/20" />
           </div>
         </div>
       </div>
 
-      {/* Ticker — monochrome */}
-      <div className="relative z-10 border-y border-black/[0.06] bg-[#F5F5F7] overflow-hidden py-4 md:py-5">
+      {/* Ticker */}
+      <div className="relative z-10 border-y border-white/10 bg-white/5 overflow-hidden py-4 md:py-5">
         <div className="marquee-track">
           {Array.from({ length: 4 }).map((_, idx) => (
             <div key={idx} className="flex items-center gap-10 shrink-0">
               {tickerWords.map((w, i) => (
-                <span key={`${idx}-${i}`} className="font-display uppercase text-2xl md:text-4xl tracking-tight whitespace-nowrap flex items-center gap-10 text-[#1D1D1F]">
+                <span key={`${idx}-${i}`} className="font-display uppercase text-2xl md:text-4xl tracking-tight whitespace-nowrap flex items-center gap-10 text-white">
                   {w}
-                  <span className="inline-block w-1 h-1 rounded-full bg-[#86868B]" />
+                  <span className="inline-block w-1 h-1 rounded-full bg-white/40" />
                 </span>
               ))}
             </div>
@@ -463,7 +469,7 @@ function HeroSection({ services, barbers, openBooking }) {
       {/* Bottom row */}
       <div className="relative z-10 px-5 md:px-10 pb-6 md:pb-8 pt-5">
         <div className="max-w-[1500px] mx-auto flex items-end justify-between gap-4">
-          <div className="font-mono text-[0.56rem] uppercase tracking-[0.28em] text-[#A1A1A6] leading-relaxed">
+          <div className="font-mono text-[0.56rem] uppercase tracking-[0.28em] text-white/40 leading-relaxed">
             © 2026 TZOUL / NO. 526 IRAKLEIOU
             <br className="hidden md:inline" />
             <span className="hidden md:inline">★ 4.8 · 90 REVIEWS</span>
