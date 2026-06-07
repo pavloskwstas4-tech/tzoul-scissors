@@ -5,13 +5,17 @@ import { ArrowRight } from "lucide-react";
 export default function Hero() {
   return (
     <section id="hero" data-testid="hero-section" className="relative min-h-[100svh] w-full overflow-hidden">
-      {/* Background image */}
-      <img
-        src={SHOP_IMAGES.storefront}
-        alt="ATH BARBERCLUB storefront at night"
+      {/* Background video */}
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
         className="absolute inset-0 w-full h-full object-cover"
         style={{ filter: "grayscale(100%) contrast(1.05) brightness(0.78)" }}
-      />
+      >
+        <source src="https://customer-assets.emergentagent.com/job_tzoul-build-1/artifacts/9yz25ow3_Metallic_hair_cutting_scissor_ro%E2%80%A6_202606071856.mp4" type="video/mp4" />
+      </video>
       <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/30 to-black/85" />
 
       {/* Top eyebrow */}
