@@ -1,37 +1,44 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useEffect } from "react";
 
-// Image with parallax (Y translate based on scroll) + split-frame hover reveal.
+// Image with parallax (Y translate based on scroll) using rAF + direct DOM
+// mutation — no React setState so zero re-renders on scroll.
 export default function ParallaxImage({ src, alt, label, className = "", height = 320 }) {
-  const ref = useRef(null);
-  const [offset, setOffset] = useState(0);
+  const wrapRef = useRef(null);
+  const imgRef = useRef(null);
+  const rafRef = useRef(null);
 
   useEffect(() => {
     const onScroll = () => {
-      const el = ref.current;
-      if (!el) return;
-      const r = el.getBoundingClientRect();
-      const center = r.top + r.height / 2;
-      const dist = (window.innerHeight / 2) - center;
-      setOffset(dist * 0.06);
+      if (rafRef.current) return;
+      rafRef.current = requestAnimationFrame(() => {
+        rafRef.current = null;
+        const el = wrapRef.current;
+        const img = imgRef.current;
+        if (!el || !img) return;
+        const r = el.getBoundingClientRect();
+        const dist = window.innerHeight / 2 - (r.top + r.height / 2);
+        img.style.transform = `translateY(${dist * 0.06}px) scale(1.08)`;
+      });
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
   }, []);
 
   return (
-    <div ref={ref} className={`split-frame relative overflow-hidden border-2 border-ink ${className}`} style={{ height }}>
+    <div ref={wrapRef} className={`relative overflow-hidden ${className}`} style={{ height }}>
       <img
+        ref={imgRef}
         src={src}
         alt={alt}
-        style={{ transform: `translateY(${offset}px) scale(1.08)`, filter: "grayscale(100%) contrast(1.05)" }}
+        style={{ filter: "grayscale(100%) contrast(1.05)" }}
         className="absolute inset-0 w-full h-full object-cover will-change-transform"
       />
-      {/* Split-frame red sweep on hover */}
-      <span className="sf-slat slat-top" />
-      <span className="sf-slat slat-bottom" />
       {label && (
-        <span className="absolute top-3 left-3 bg-[#E63329] text-white font-mono text-[0.6rem] uppercase tracking-[0.18em] px-1.5 py-0.5 z-10">
+        <span className="absolute top-3 left-3 bg-[#1D1D1F] text-white font-mono text-[0.6rem] uppercase tracking-[0.18em] px-1.5 py-0.5 z-10">
           {label}
         </span>
       )}

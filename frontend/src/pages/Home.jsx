@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { ChevronsRight, ArrowUpRight, ArrowRight, Phone, Mail, MapPin, Instagram, Sparkles } from "lucide-react";
 import Ticker from "@/components/Ticker";
@@ -401,6 +401,22 @@ function ContactCard({ icon, label, value, href, testid }) {
  * ------------------------------------------------------------------------- */
 function HeroSection({ services, barbers, openBooking }) {
   void services; void barbers;
+  const videoRef = useRef(null);
+
+  // Pause video when hero scrolls off-screen — stops GPU decode drain
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) video.play().catch(() => {});
+        else video.pause();
+      },
+      { threshold: 0.1 }
+    );
+    io.observe(video);
+    return () => io.disconnect();
+  }, []);
 
   const tickerWords = ["BARBER","ATHENS","HERAKLION","EST. 2019","NO. 526","TZOUL","BY APPOINTMENT","TRADITION × STREET"];
 
@@ -408,6 +424,7 @@ function HeroSection({ services, barbers, openBooking }) {
     <section id="hero" data-testid="hero" className="relative bg-black overflow-hidden min-h-[100svh] flex flex-col">
       {/* Background video */}
       <video
+        ref={videoRef}
         autoPlay
         muted
         loop
