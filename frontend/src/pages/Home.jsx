@@ -44,8 +44,17 @@ export default function Home() {
       <Reveal>
         <section id="manifesto" className="bg-[#F5F5F7] py-14 md:py-20 border-y border-black/[0.05]">
           <div className="max-w-[1500px] mx-auto px-5 md:px-8 grid grid-cols-1 md:grid-cols-12 gap-8">
-            <div className="md:col-span-4 reveal">
-              <div className="mt-5 w-10 h-10 rounded-2xl bg-[#1D1D1F]/8" />
+            <div className="md:col-span-4 reveal flex flex-col justify-center gap-8 pt-2">
+              {[
+                { num: "2019", label: "Est. Athens" },
+                { num: "4.8★", label: "90+ Reviews" },
+                { num: "No.526", label: "Leoforos Irakleiou" },
+              ].map((s) => (
+                <div key={s.num} className="border-l-2 border-[#1D1D1F]/10 pl-5">
+                  <div className="font-display font-black text-3xl md:text-4xl text-[#1D1D1F] leading-none">{s.num}</div>
+                  <div className="font-mono text-[0.6rem] uppercase tracking-widest text-[#A1A1A6] mt-1">{s.label}</div>
+                </div>
+              ))}
             </div>
             <div className="md:col-span-8 reveal">
               <h2 className="title-massive text-2xl md:text-4xl lg:text-5xl leading-tight">
