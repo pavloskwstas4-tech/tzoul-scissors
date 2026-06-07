@@ -12,11 +12,10 @@ export default function Hero() {
         loop
         playsInline
         className="absolute inset-0 w-full h-full object-cover"
-        style={{ filter: "grayscale(100%) contrast(1.05) brightness(0.78)" }}
       >
         <source src="https://customer-assets.emergentagent.com/job_tzoul-build-1/artifacts/9yz25ow3_Metallic_hair_cutting_scissor_ro%E2%80%A6_202606071856.mp4" type="video/mp4" />
       </video>
-      <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/30 to-black/85" />
+      <div className="absolute inset-0 bg-black/60" />
 
       {/* Top eyebrow */}
       <div className="relative z-10 pt-32 md:pt-40 px-6 md:px-10">
