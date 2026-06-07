@@ -43,7 +43,7 @@ export default function Nav() {
 
   return (
     <header data-testid="site-nav" className="sticky top-0 z-50 bg-black">
-      <div className="max-w-[1500px] mx-auto px-5 md:px-8 h-16 flex items-center justify-between gap-4">
+      <div className="max-w-[1500px] mx-auto px-5 md:px-8 h-16 flex items-center justify-between gap-4 relative">
         {/* Brand */}
         <a href="/#hero" onClick={goToSection("hero")} data-testid="brand-logo" className="flex items-center gap-3 shrink-0 group">
           <span className="font-display text-2xl md:text-3xl leading-none text-white relative">
@@ -55,8 +55,8 @@ export default function Nav() {
           </span>
         </a>
 
-        {/* Center nav */}
-        <nav className="hidden lg:flex items-center gap-6 mx-auto">
+        {/* Center nav — absolutely centered so it's always pixel-perfect */}
+        <nav className="hidden lg:flex items-center gap-6 absolute left-1/2 -translate-x-1/2">
           {NAV_LINKS.map((l) => {
             const isActive = loc.pathname === "/" && active === l.id;
             return (
