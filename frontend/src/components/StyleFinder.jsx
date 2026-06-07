@@ -252,12 +252,6 @@ export default function StyleFinder({ open, onClose }) {
                   {step === 1 && "How would you describe your hair?"}
                   {step === 2 && "What is your daily vibe?"}
                 </h2>
-                <p className="mt-2 text-[#86868B] text-sm">
-                  {step === 0 && "Look in a mirror — outline your jaw and forehead."}
-                  {step === 1 && "Your natural texture, not a styled state."}
-                  {step === 2 && "Pick the one that matches your day-to-day."}
-                </p>
-
                 {/* Progress bar */}
                 <div className="mt-6 flex gap-2" data-testid="style-progress">
                   {[0, 1, 2].map((i) => (

@@ -20,13 +20,10 @@ export const STOCK = {
 
 // All anchor IDs live on the home page; "book" navigates to the /book route.
 export const NAV_LINKS = [
-  { num: "01", id: "hero",          label: "Home" },
-  { num: "02", id: "style-finder",  label: "Style Finder" },
-  { num: "03", id: "services",      label: "Services" },
-  { num: "04", id: "instagram",     label: "Instagram" },
-  { num: "05", id: "gallery",       label: "Gallery" },
-  { num: "06", id: "about",         label: "About" },
-  { num: "07", id: "contact",       label: "Contact" },
+  { num: "01", id: "services",  label: "Services" },
+  { num: "02", id: "gallery",   label: "Gallery" },
+  { num: "03", id: "about",     label: "About" },
+  { num: "04", id: "contact",   label: "Contact" },
 ];
 
 export const SERVICE_GROUPS = [

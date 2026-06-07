@@ -67,10 +67,6 @@ export default function Home() {
           <div className="max-w-[1500px] mx-auto px-5 md:px-8 relative">
             <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
               <div className="md:col-span-7 reveal">
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/10 border border-white/15 rounded-full mb-5">
-                  <Sparkles size={13} className="text-white/70" />
-                  <span className="font-mono text-[0.6rem] uppercase tracking-wider text-white/60">New · Style Finder</span>
-                </div>
                 <h2 className="title-massive text-3xl md:text-5xl lg:text-6xl leading-[0.95]">
                   Not sure which cut suits you?
                 </h2>
