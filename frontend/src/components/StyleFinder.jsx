@@ -209,218 +209,208 @@ export default function StyleFinder({ open, onClose }) {
   return (
     <AnimatePresence>
       <motion.div
-        initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
-        animate={{ opacity: 1, backdropFilter: "blur(8px)" }}
-        exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
-        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
+        key="sf-backdrop"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.18 }}
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/65 p-4"
         onClick={handleClose}
       >
         <motion.div
-          initial={{ opacity: 0, scale: 0.9, y: 60 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 40 }}
-          transition={{ type: "spring", damping: 22, stiffness: 240, mass: 0.9 }}
-          className="relative bg-white w-full max-w-5xl max-h-[90vh] overflow-y-auto overscroll-contain rounded-2xl shadow-2xl"
+          key="sf-card"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 12 }}
+          transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          className="relative bg-white w-full max-w-5xl max-h-[90vh] overflow-y-auto overscroll-contain rounded-3xl shadow-[0_24px_60px_rgba(0,0,0,0.18),0_4px_16px_rgba(0,0,0,0.08)]"
           onClick={(e) => e.stopPropagation()}
           data-testid="style-finder-modal"
         >
-          <motion.div
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ duration: 0.7, ease: [0.65, 0, 0.35, 1], delay: 0.15 }}
-            style={{ transformOrigin: "left" }}
-            className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#E63329] via-[#ff5040] to-[#E63329] rounded-t-2xl"
-          />
-          <motion.button
-            initial={{ opacity: 0, rotate: -90 }}
-            animate={{ opacity: 1, rotate: 0 }}
-            transition={{ delay: 0.3, duration: 0.3 }}
-            whileHover={{ scale: 1.1, rotate: 90 }}
-            whileTap={{ scale: 0.9 }}
+          <div className="absolute top-0 left-0 right-0 h-px bg-black/[0.08] rounded-t-3xl" />
+
+          <button
             onClick={handleClose}
-            className="absolute top-4 right-4 z-10 p-2 bg-black/5 hover:bg-[#E63329] hover:text-white rounded-full transition-colors"
+            className="absolute top-4 right-4 z-20 p-2 bg-white border border-black/[0.10] shadow-[0_2px_8px_rgba(0,0,0,0.10)] hover:bg-[#1D1D1F] hover:text-white hover:border-transparent rounded-full transition-colors duration-150"
             data-testid="style-finder-close"
           >
             <X size={20} />
-          </motion.button>
+          </button>
 
           <div className="p-6 md:p-10">
-            <AnimatePresence mode="wait">
-              {!result && (
-                <motion.div
-                  key={`q-${step}`}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -16 }}
-                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                >
-                  {/* Header */}
-                  <div className="flex items-center gap-2 mb-2">
-                    <Sparkles size={16} className="text-[#E63329]" />
-                    <span className="font-mono text-[0.66rem] uppercase tracking-wider text-gray-500">
-                      Style Finder · Question {step + 1} / 3
-                    </span>
-                  </div>
-                  <h2 className="title-massive text-3xl md:text-5xl">
-                    {step === 0 && <>What is your face shape<span className="text-[#E63329]">?</span></>}
-                    {step === 1 && <>How would you describe your hair<span className="text-[#E63329]">?</span></>}
-                    {step === 2 && <>What is your daily vibe<span className="text-[#E63329]">?</span></>}
-                  </h2>
-                  <p className="mt-2 text-gray-600 text-sm">
-                    {step === 0 && "Look in a mirror — outline your jaw and forehead."}
-                    {step === 1 && "Your natural texture, not a styled state."}
-                    {step === 2 && "Pick the one that matches your day-to-day."}
-                  </p>
+            {/* Quiz questions */}
+            {!result && (
+              <div key={step} className="modal-step-fade">
+                <div className="flex items-center gap-2 mb-2">
+                  <Sparkles size={16} className="text-[#86868B]" />
+                  <span className="font-mono text-[0.66rem] uppercase tracking-wider text-[#86868B]">
+                    Style Finder · Question {step + 1} / 3
+                  </span>
+                </div>
+                <h2 className="title-massive text-3xl md:text-5xl">
+                  {step === 0 && "What is your face shape?"}
+                  {step === 1 && "How would you describe your hair?"}
+                  {step === 2 && "What is your daily vibe?"}
+                </h2>
+                <p className="mt-2 text-[#86868B] text-sm">
+                  {step === 0 && "Look in a mirror — outline your jaw and forehead."}
+                  {step === 1 && "Your natural texture, not a styled state."}
+                  {step === 2 && "Pick the one that matches your day-to-day."}
+                </p>
 
-                  {/* Progress bar */}
-                  <div className="mt-6 flex gap-2" data-testid="style-progress">
-                    {[0, 1, 2].map((i) => (
-                      <div
-                        key={i}
-                        className={`h-1.5 flex-1 rounded-full transition-all ${i <= step ? "bg-[#E63329]" : "bg-gray-200"}`}
-                      />
-                    ))}
-                  </div>
+                {/* Progress bar */}
+                <div className="mt-6 flex gap-2" data-testid="style-progress">
+                  {[0, 1, 2].map((i) => (
+                    <div
+                      key={i}
+                      className={`h-1 flex-1 rounded-full transition-all duration-300 ${i <= step ? "bg-[#1D1D1F]" : "bg-black/[0.08]"}`}
+                    />
+                  ))}
+                </div>
 
-                  {/* Options */}
-                  <div className="mt-8">
-                    {step === 0 && (
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4" data-testid="face-options">
-                        {FACE_SHAPES.map((f) => {
-                          const sel = face === f.id;
-                          return (
-                            <button
-                              key={f.id}
-                              data-testid={`face-${f.id}`}
-                              onClick={() => setFace(f.id)}
-                              className={`group p-5 rounded-2xl transition-all text-left ${sel ? "bg-[#E63329] text-white shadow-xl scale-105" : "bg-gray-50 border border-gray-200 hover:border-gray-400 hover:shadow"}`}
-                            >
-                              <div className={`mx-auto w-20 h-24 mb-3 ${sel ? "text-white" : "text-gray-700"}`}>
-                                <FaceIcon shape={f.id} className="w-full h-full" />
-                              </div>
-                              <div className="font-display uppercase text-base text-center">{f.label}</div>
-                              <div className={`text-xs text-center mt-1 ${sel ? "text-white/85" : "text-gray-500"}`}>{f.desc}</div>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    )}
-
-                    {step === 1 && (
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4" data-testid="texture-options">
-                        {TEXTURES.map((t) => {
-                          const sel = texture === t.id;
-                          return (
-                            <button
-                              key={t.id}
-                              data-testid={`texture-${t.id}`}
-                              onClick={() => setTexture(t.id)}
-                              className={`p-5 rounded-2xl transition-all text-left ${sel ? "bg-[#E63329] text-white shadow-xl scale-105" : "bg-gray-50 border border-gray-200 hover:border-gray-400 hover:shadow"}`}
-                            >
-                              <TextureGlyph id={t.id} active={sel} />
-                              <div className="font-display uppercase text-base mt-3">{t.label}</div>
-                              <div className={`text-xs mt-1 ${sel ? "text-white/85" : "text-gray-500"}`}>{t.desc}</div>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    )}
-
-                    {step === 2 && (
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4" data-testid="vibe-options">
-                        {VIBES.map((v) => {
-                          const sel = vibe === v.id;
-                          return (
-                            <button
-                              key={v.id}
-                              data-testid={`vibe-${v.id}`}
-                              onClick={() => setVibe(v.id)}
-                              className={`p-6 rounded-2xl transition-all text-left ${sel ? "bg-[#E63329] text-white shadow-xl scale-105" : "bg-gray-50 border border-gray-200 hover:border-gray-400 hover:shadow"}`}
-                            >
-                              <div className="font-display uppercase text-base md:text-lg">{v.label}</div>
-                              <div className={`text-xs mt-2 ${sel ? "text-white/85" : "text-gray-500"}`}>{v.desc}</div>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Nav */}
-                  <div className="flex items-center gap-3 mt-10 max-w-md mx-auto">
-                    <button
-                      data-testid="style-back"
-                      onClick={() => setStep((s) => Math.max(0, s - 1))}
-                      disabled={step === 0}
-                      className="flex-1 px-4 py-3 border border-gray-300 rounded-full font-display uppercase text-sm disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
-                    >
-                      <ArrowLeft size={13} /> Back
-                    </button>
-                    <button
-                      data-testid="style-next"
-                      onClick={() => setStep((s) => s + 1)}
-                      disabled={!canNext()}
-                      className="flex-1 px-4 py-3 bg-[#E63329] text-white rounded-full font-display uppercase text-sm disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#d62d25] transition-colors shadow-md flex items-center justify-center gap-2"
-                    >
-                      {step === 2 ? "Reveal my style" : "Next"} <ArrowRight size={13} />
-                    </button>
-                  </div>
-                </motion.div>
-              )}
-
-              {result && (
-                <motion.div
-                  key="result"
-                  initial={{ opacity: 0, scale: 0.96 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.96 }}
-                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                  data-testid="style-result"
-                >
-                  <div className="flex items-center gap-2">
-                    <Sparkles size={16} className="text-[#E63329]" />
-                    <span className="font-mono text-[0.66rem] uppercase tracking-wider text-gray-500">Your match</span>
-                  </div>
-                  <h2 className="title-massive text-4xl md:text-6xl leading-[0.95] mt-2">
-                    {result.name}<span className="text-[#E63329]">.</span>
-                  </h2>
-                  <p className="mt-4 text-gray-600 text-sm md:text-base max-w-2xl leading-relaxed">
-                    {result.description}
-                  </p>
-
-                  {matchBarber && (
-                    <div className="mt-8 p-5 md:p-6 rounded-2xl bg-gradient-to-br from-gray-900 to-black text-white flex flex-col md:flex-row items-start md:items-center gap-5" data-testid="style-barber-match">
-                      <div className="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden border-2 border-[#E63329] flex-shrink-0">
-                        <img src={matchBarber.image} alt={matchBarber.name} className="w-full h-full object-cover" style={{ filter: "grayscale(100%)" }} />
-                      </div>
-                      <div className="flex-1">
-                        <div className="font-mono text-[0.6rem] uppercase tracking-wider text-white/55">Best match barber</div>
-                        <div className="font-display uppercase text-2xl mt-1">{matchBarber.name}</div>
-                        <div className="text-sm text-white/75 mt-1">{matchBarber.role} — specialised in this style.</div>
-                      </div>
+                {/* Options */}
+                <div className="mt-8">
+                  {step === 0 && (
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3" data-testid="face-options">
+                      {FACE_SHAPES.map((f) => {
+                        const sel = face === f.id;
+                        return (
+                          <button
+                            key={f.id}
+                            data-testid={`face-${f.id}`}
+                            onClick={() => setFace(f.id)}
+                            className={`p-5 rounded-2xl transition-all duration-200 text-left ${
+                              sel
+                                ? "bg-[#1D1D1F] text-white shadow-[0_6px_20px_rgba(0,0,0,0.14)] scale-[1.02]"
+                                : "bg-[#F5F5F7] hover:bg-white hover:shadow-[0_4px_16px_rgba(0,0,0,0.07)] border border-transparent hover:border-black/[0.06]"
+                            }`}
+                          >
+                            <div className={`mx-auto w-20 h-24 mb-3 ${sel ? "text-white" : "text-[#1D1D1F]"}`}>
+                              <FaceIcon shape={f.id} className="w-full h-full" />
+                            </div>
+                            <div className="font-display uppercase text-sm text-center">{f.label}</div>
+                            <div className={`font-mono text-[0.58rem] uppercase tracking-wider text-center mt-1 ${sel ? "text-white/55" : "text-[#A1A1A6]"}`}>{f.desc}</div>
+                          </button>
+                        );
+                      })}
                     </div>
                   )}
 
-                  <div className="mt-8 flex flex-col sm:flex-row gap-3">
-                    <button
-                      data-testid="style-book"
-                      onClick={handleBookStyle}
-                      className="px-7 py-3.5 bg-[#E63329] text-white rounded-full font-display uppercase text-sm hover:bg-[#d62d25] transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
-                    >
-                      <ChevronsRight size={15} /> Book this style now
-                    </button>
-                    <button
-                      data-testid="style-retake"
-                      onClick={reset}
-                      className="px-7 py-3.5 border border-gray-300 rounded-full font-display uppercase text-sm hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
-                    >
-                      <RotateCcw size={14} /> Retake quiz
-                    </button>
+                  {step === 1 && (
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3" data-testid="texture-options">
+                      {TEXTURES.map((t) => {
+                        const sel = texture === t.id;
+                        return (
+                          <button
+                            key={t.id}
+                            data-testid={`texture-${t.id}`}
+                            onClick={() => setTexture(t.id)}
+                            className={`p-5 rounded-2xl transition-all duration-200 text-left ${
+                              sel
+                                ? "bg-[#1D1D1F] text-white shadow-[0_6px_20px_rgba(0,0,0,0.14)] scale-[1.02]"
+                                : "bg-[#F5F5F7] hover:bg-white hover:shadow-[0_4px_16px_rgba(0,0,0,0.07)] border border-transparent hover:border-black/[0.06]"
+                            }`}
+                          >
+                            <TextureGlyph id={t.id} active={sel} />
+                            <div className="font-display uppercase text-sm mt-3">{t.label}</div>
+                            <div className={`font-mono text-[0.58rem] uppercase tracking-wider mt-1 ${sel ? "text-white/55" : "text-[#A1A1A6]"}`}>{t.desc}</div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {step === 2 && (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3" data-testid="vibe-options">
+                      {VIBES.map((v) => {
+                        const sel = vibe === v.id;
+                        return (
+                          <button
+                            key={v.id}
+                            data-testid={`vibe-${v.id}`}
+                            onClick={() => setVibe(v.id)}
+                            className={`p-6 rounded-2xl transition-all duration-200 text-left ${
+                              sel
+                                ? "bg-[#1D1D1F] text-white shadow-[0_6px_20px_rgba(0,0,0,0.14)] scale-[1.02]"
+                                : "bg-[#F5F5F7] hover:bg-white hover:shadow-[0_4px_16px_rgba(0,0,0,0.07)] border border-transparent hover:border-black/[0.06]"
+                            }`}
+                          >
+                            <div className="font-display uppercase text-base">{v.label}</div>
+                            <div className={`font-mono text-[0.58rem] uppercase tracking-wider mt-2 ${sel ? "text-white/55" : "text-[#A1A1A6]"}`}>{v.desc}</div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+
+                {/* Nav */}
+                <div className="flex items-center gap-3 mt-10 max-w-md mx-auto">
+                  <button
+                    data-testid="style-back"
+                    onClick={() => setStep((s) => Math.max(0, s - 1))}
+                    disabled={step === 0}
+                    className="flex-1 px-4 py-3 border border-black/[0.10] rounded-xl font-display uppercase text-sm text-[#86868B] disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#F5F5F7] hover:text-[#1D1D1F] transition-colors duration-150 flex items-center justify-center gap-2"
+                  >
+                    <ArrowLeft size={13} /> Back
+                  </button>
+                  <button
+                    data-testid="style-next"
+                    onClick={() => setStep((s) => s + 1)}
+                    disabled={!canNext()}
+                    className="flex-1 px-4 py-3 bg-[#1D1D1F] text-white rounded-xl font-display uppercase text-sm disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#333] transition-colors duration-150 shadow-[0_4px_14px_rgba(0,0,0,0.10)] flex items-center justify-center gap-2"
+                  >
+                    {step === 2 ? "Reveal my style" : "Next"} <ArrowRight size={13} />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Result */}
+            {result && (
+              <div className="modal-step-fade" data-testid="style-result">
+                <div className="flex items-center gap-2">
+                  <Sparkles size={16} className="text-[#86868B]" />
+                  <span className="font-mono text-[0.66rem] uppercase tracking-wider text-[#86868B]">Your match</span>
+                </div>
+                <h2 className="title-massive text-4xl md:text-6xl leading-[0.95] mt-2">
+                  {result.name}.
+                </h2>
+                <p className="mt-4 text-[#86868B] text-sm md:text-base max-w-2xl leading-relaxed">
+                  {result.description}
+                </p>
+
+                {matchBarber && (
+                  <div className="mt-8 p-5 md:p-6 rounded-2xl bg-[#1D1D1F] text-white flex flex-col md:flex-row items-start md:items-center gap-5" data-testid="style-barber-match">
+                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden ring-2 ring-white/20 flex-shrink-0">
+                      <img src={matchBarber.image} alt={matchBarber.name} className="w-full h-full object-cover" style={{ filter: "grayscale(100%)" }} />
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-mono text-[0.6rem] uppercase tracking-wider text-white/50">Best match barber</div>
+                      <div className="font-display uppercase text-xl mt-1">{matchBarber.name}</div>
+                      <div className="font-mono text-[0.62rem] uppercase tracking-wider text-white/55 mt-0.5">{matchBarber.role} — specialised in this style.</div>
+                    </div>
                   </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                )}
+
+                <div className="mt-8 flex flex-col sm:flex-row gap-3">
+                  <button
+                    data-testid="style-book"
+                    onClick={handleBookStyle}
+                    className="px-7 py-3.5 bg-[#1D1D1F] text-white rounded-xl font-display uppercase text-sm hover:bg-[#333] transition-colors duration-150 shadow-[0_4px_14px_rgba(0,0,0,0.10)] flex items-center justify-center gap-2"
+                  >
+                    <ChevronsRight size={15} /> Book this style now
+                  </button>
+                  <button
+                    data-testid="style-retake"
+                    onClick={reset}
+                    className="px-7 py-3.5 border border-black/[0.10] rounded-xl font-display uppercase text-sm text-[#86868B] hover:bg-[#F5F5F7] hover:text-[#1D1D1F] transition-colors duration-150 flex items-center justify-center gap-2"
+                  >
+                    <RotateCcw size={14} /> Retake quiz
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </motion.div>
       </motion.div>
