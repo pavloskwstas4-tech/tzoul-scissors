@@ -414,7 +414,7 @@ function HeroSection({ services, barbers, openBooking }) {
         playsInline
         className="absolute inset-0 w-full h-full object-cover"
       >
-        <source src="https://customer-assets.emergentagent.com/job_tzoul-build-1/artifacts/9yz25ow3_Metallic_hair_cutting_scissor_ro%E2%80%A6_202606071856.mp4" type="video/mp4" />
+        <source src="https://customer-assets.emergentagent.com/job_tzoul-build-1/artifacts/wf7yt2ce_Metallic_hair_cutting_scissor_ro%E2%80%A6_202606071913.mp4" type="video/mp4" />
       </video>
       {/* Dark overlay so text stays readable */}
       <div className="absolute inset-0 bg-black/55" />
