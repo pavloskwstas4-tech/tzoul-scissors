@@ -1,7 +1,6 @@
 import { Outlet } from "react-router-dom";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import MusicToggle from "@/components/MusicToggle";
 import PageTransition from "@/components/PageTransition";
 
 export default function Layout() {
@@ -14,7 +13,6 @@ export default function Layout() {
         </main>
         <Footer />
       </PageTransition>
-      <MusicToggle />
     </div>
   );
 }
