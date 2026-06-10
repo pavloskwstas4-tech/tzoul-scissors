@@ -10,6 +10,10 @@ import { SHOP_IMAGES, STOCK, MANIFESTO_WORDS, SERVICE_GROUPS } from "@/data/site
 import { useBooking } from "@/contexts/BookingContext";
 import BookingModal from "@/components/BookingModal";
 import StyleFinder from "@/components/StyleFinder";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -403,72 +407,126 @@ function ContactCard({ icon, label, value, href, testid }) {
 
 
 /* ---------------------------------------------------------------------------
- * HeroSection — Brutalist Type Poster.
- * Pure black, no photo. Massive "TZOUL" wordmark fills the canvas.
- * A horizontal marquee runs beneath. Chrome "Book →" pill bottom-right.
- * Streetwear / drop-page energy.
+ * HeroSection — Scroll-driven video scrub with text split animation.
+ * The section is PINNED until the video finishes playing via scroll.
+ * Text splits left/right as the user starts scrolling.
+ *
+ * Tuning knobs (comments inline):
+ *   SCROLL_LENGTHS  — how many viewport-heights of scroll track the video needs
+ *   TEXT_EXIT_FRAC  — fraction of scroll at which text is fully gone (0-1)
+ *   scrub           — GSAP lag in seconds (lower = more responsive)
  * ------------------------------------------------------------------------- */
 function HeroSection({ services, barbers, openBooking }) {
   void services; void barbers;
-  const videoRef = useRef(null);
 
-  // Pause video when hero scrolls off-screen — stops GPU decode drain
+  const sectionRef  = useRef(null);
+  const videoRef    = useRef(null);
+  const cornerLRef  = useRef(null);
+  const cornerRRef  = useRef(null);
+  const wordLRef    = useRef(null);
+  const wordRRef    = useRef(null);
+  const subtitleRef = useRef(null);
+  const bottomRef   = useRef(null);
+
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) video.play().catch(() => {});
-        else video.pause();
-      },
-      { threshold: 0.1 }
-    );
-    io.observe(video);
-    return () => io.disconnect();
+    const video   = videoRef.current;
+    const section = sectionRef.current;
+
+    const build = () => {
+      const dur = video.duration;
+      if (!dur || !isFinite(dur)) return;
+
+      /* ── How much scroll is needed to play the full video ──────────────────
+       * Each unit = 1 viewport height of scroll distance.
+       * Increase to give users more time to absorb the video.               */
+      const SCROLL_LENGTHS  = 5;
+
+      /* ── Text exits in the first X% of total scroll progress ──────────── */
+      const TEXT_EXIT_FRAC  = 0.28;
+
+      // Paused timeline that GSAP will scrub manually via onUpdate
+      const textTl = gsap.timeline({ paused: true })
+        .to(cornerLRef.current,  { x: -140, opacity: 0, ease: "none" }, 0)
+        .to(cornerRRef.current,  { x:  140, opacity: 0, ease: "none" }, 0)
+        .to(wordLRef.current,    { x: "-40vw",           ease: "none" }, 0)
+        .to(wordRRef.current,    { x:  "40vw",           ease: "none" }, 0)
+        .to(subtitleRef.current, { opacity: 0, y: 10,   ease: "none" }, 0)
+        .to(bottomRef.current,   { opacity: 0, y: 32,   ease: "none" }, 0);
+
+      ScrollTrigger.create({
+        trigger: section,
+        start:   "top top",
+        /* ── Total scroll track = SCROLL_LENGTHS × viewport height ──────── */
+        end:     () => `+=${window.innerHeight * SCROLL_LENGTHS}`,
+        pin:          true,
+        anticipatePin: 1,
+        /* ── scrub: 0.5 = 0.5 s catch-up lag; use scrub:true for instant── */
+        scrub:        0.5,
+        onUpdate(self) {
+          // ── Video scrub ────────────────────────────────────────────────
+          video.currentTime = Math.min(self.progress * dur, dur - 0.001);
+
+          // ── Text wipe (exits during first TEXT_EXIT_FRAC of scroll) ───
+          textTl.progress(Math.min(self.progress / TEXT_EXIT_FRAC, 1));
+        },
+      });
+    };
+
+    // Build as soon as metadata is ready (duration needed)
+    if (video.readyState >= 1) build();
+    else video.addEventListener("loadedmetadata", build, { once: true });
+
+    return () => ScrollTrigger.getAll().forEach(t => t.kill());
   }, []);
 
-  const tickerWords = ["BARBER","ATHENS","HERAKLION","EST. 2019","NO. 526","TZOUL","BY APPOINTMENT","TRADITION × STREET"];
-
   return (
-    <section id="hero" data-testid="hero" className="relative bg-black overflow-hidden min-h-[100svh] flex flex-col">
-      {/* Background video */}
+    <section
+      ref={sectionRef}
+      id="hero"
+      data-testid="hero"
+      className="relative bg-black overflow-hidden min-h-[100svh] flex flex-col"
+    >
+      {/* Video — no autoPlay/loop; scroll drives playback */}
       <video
         ref={videoRef}
-        autoPlay
         muted
-        loop
         playsInline
+        preload="auto"
         className="absolute inset-0 w-full h-full object-cover"
       >
         <source src="https://customer-assets.emergentagent.com/job_tzoul-build-1/artifacts/wsanky2s_Metallic_hair_cutting_scissor_ro%E2%80%A6_202606072121.mp4" type="video/mp4" />
       </video>
-      {/* Dark overlay so text stays readable */}
       <div className="absolute inset-0 bg-black/55" />
 
-      {/* Corner labels */}
+      {/* Corner labels — exit left/right on scroll */}
       <div className="relative z-10 pt-28 md:pt-32 px-5 md:px-10">
         <div className="max-w-[1500px] mx-auto flex items-start justify-between">
-          <div className="font-mono text-[0.58rem] uppercase tracking-[0.32em] text-white/50">
+          <div ref={cornerLRef} className="font-mono text-[0.58rem] uppercase tracking-[0.32em] text-white/50">
             "TZOUL" / VOL. 01 / DROP A
           </div>
-          <div className="hidden md:block font-mono text-[0.58rem] uppercase tracking-[0.32em] text-white/50 text-right">
+          <div ref={cornerRRef} className="hidden md:block font-mono text-[0.58rem] uppercase tracking-[0.32em] text-white/50 text-right">
             FOR PRIVATE APPOINTMENT<br />
             <span className="opacity-70">SCHEDULED · NOT WALKED-IN</span>
           </div>
         </div>
       </div>
 
-      {/* MASSIVE wordmark */}
+      {/* Wordmark — split into "TZO" + "UL" for the left/right wipe */}
       <div className="relative z-10 flex-1 flex items-center justify-center px-5 md:px-10">
         <div className="w-full">
-          <h1 data-testid="hero-title"
-            className="font-display font-black uppercase text-white text-center leading-[0.82]"
-            style={{ fontFamily: "'Outfit', sans-serif", fontSize: "clamp(7rem, 28vw, 26rem)", letterSpacing: "-0.045em" }}>
-            TZOUL
-            <span aria-hidden="true" className="align-top text-white/40 font-mono"
-              style={{ fontSize: "0.18em", marginLeft: "0.05em", letterSpacing: "0.05em" }}>®</span>
+          <h1
+            data-testid="hero-title"
+            className="font-display font-black uppercase text-white text-center leading-[0.82] select-none"
+            style={{ fontFamily: "'Outfit', sans-serif", fontSize: "clamp(7rem, 28vw, 26rem)", letterSpacing: "-0.045em" }}
+          >
+            <span ref={wordLRef} className="inline-block">TZO</span>
+            <span ref={wordRRef} className="inline-block">
+              UL
+              <span aria-hidden="true" className="align-top text-white/40 font-mono"
+                style={{ fontSize: "0.18em", marginLeft: "0.05em", letterSpacing: "0.05em" }}>®</span>
+            </span>
           </h1>
-          <div className="mt-3 md:mt-5 flex items-center justify-center gap-4 font-mono text-[0.62rem] md:text-xs uppercase tracking-[0.42em] text-white/50">
+          <div ref={subtitleRef} className="mt-3 md:mt-5 flex items-center justify-center gap-4 font-mono text-[0.62rem] md:text-xs uppercase tracking-[0.42em] text-white/50">
             <span className="inline-block w-10 md:w-16 h-px bg-white/20" />
             BARBER · ATHENS
             <span className="inline-block w-10 md:w-16 h-px bg-white/20" />
@@ -476,8 +534,8 @@ function HeroSection({ services, barbers, openBooking }) {
         </div>
       </div>
 
-      {/* Bottom row */}
-      <div className="relative z-10 px-5 md:px-10 pb-6 md:pb-8 pt-5">
+      {/* Bottom row — fades down on scroll */}
+      <div ref={bottomRef} className="relative z-10 px-5 md:px-10 pb-6 md:pb-8 pt-5">
         <div className="max-w-[1500px] mx-auto flex items-end justify-between gap-4">
           <div className="font-mono text-[0.56rem] uppercase tracking-[0.28em] text-white/40 leading-relaxed">
             © 2026 TZOUL / NO. 526 IRAKLEIOU
@@ -497,3 +555,5 @@ function HeroSection({ services, barbers, openBooking }) {
     </section>
   );
 }
+
+// end of file
