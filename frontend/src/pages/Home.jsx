@@ -429,56 +429,47 @@ function HeroSection({ services, barbers, openBooking }) {
 
     video.load();
 
-    const SCROLL_LENGTHS = 12;               // ← 12× viewport height — slow, cinematic
-    const TOTAL_DUR      = 10;               // timeline units (ratio matters, not value)
-    const TEXT_END       = TOTAL_DUR * 0.28; // text gone at 28 % of scroll
+    // ── Text exit timeline (paused; driven manually via onUpdate) ────────────
+    const textTl = gsap.timeline({ paused: true })
+      .to(wordLRef.current,    { xPercent: -150, opacity: 0, ease: "none" }, 0)
+      .to(wordRRef.current,    { xPercent:  150, opacity: 0, ease: "none" }, 0)
+      .to(cornerLRef.current,  { x: -140,  opacity: 0, ease: "none" }, 0)
+      .to(cornerRRef.current,  { x:  140,  opacity: 0, ease: "none" }, 0)
+      .to(subtitleRef.current, { opacity: 0, y: 10, ease: "none" }, 0)
+      .to(bottomRef.current,   { opacity: 0, y: 32, ease: "none" }, 0);
 
-    /* ── Proxy: GSAP tweens pct 0→1; onUpdate maps to video.currentTime ────
-     * This avoids needing video.duration at creation time — resolves lazily. */
-    const proxy = { pct: 0 };
-
-    const tl = gsap.timeline();
-
-    // Video proxy — full timeline length
-    tl.to(proxy, {
-      pct:      1,
-      ease:     "none",
-      duration: TOTAL_DUR,
-      onUpdate() {
-        const dur = video.duration;
-        if (dur && isFinite(dur)) {
-          video.currentTime = Math.min(proxy.pct * dur, dur - 0.001);
-        }
-      },
-    }, 0);
-
-    // Text exits during first TEXT_END units (28 % of total)
-    tl.to(wordLRef.current,    { xPercent: -150, opacity: 0, ease: "none", duration: TEXT_END }, 0)
-      .to(wordRRef.current,    { xPercent:  150, opacity: 0, ease: "none", duration: TEXT_END }, 0)
-      .to(cornerLRef.current,  { x: -140, opacity: 0, ease: "none", duration: TEXT_END * 0.7 }, 0)
-      .to(cornerRRef.current,  { x:  140, opacity: 0, ease: "none", duration: TEXT_END * 0.7 }, 0)
-      .to(subtitleRef.current, { opacity: 0, y: 10, ease: "none", duration: TEXT_END * 0.5 }, 0)
-      .to(bottomRef.current,   { opacity: 0, y: 32, ease: "none", duration: TEXT_END * 0.5 }, 0);
-
-    /* ── ScrollTrigger drives the entire timeline via scrub: 2.5 ────────────
-     * GSAP's own ticker applies 2.5 s of inertia lag — zero rAF conflicts,
-     * zero competing tweens, buttery cinematic feel.                        */
+    // ── ScrollTrigger ────────────────────────────────────────────────────────
+    // scrub: 2.5 on the ScrollTrigger (NOT on an animation) means GSAP's
+    // internal inertia tween catches up to raw scroll over 2.5 s.
+    // self.progress in onUpdate IS the smoothed value — the inertia is already
+    // baked in before we touch the video or text.
     ScrollTrigger.create({
       trigger:             section,
       start:               "top top",
-      end:                 () => `+=${window.innerHeight * SCROLL_LENGTHS}`,
+      end:                 () => `+=${window.innerHeight * 12}`,
       pin:                 true,
       pinSpacing:          true,
       anticipatePin:       1,
       scrub:               2.5,
-      animation:           tl,
       invalidateOnRefresh: true,
+      onUpdate(self) {
+        // Video: near-instant tween (0.1 s) on top of the already-smoothed
+        // scrub progress. overwrite:"auto" kills any in-flight tween first.
+        const dur = video.duration;
+        if (dur && isFinite(dur)) {
+          gsap.to(video, {
+            currentTime: self.progress * dur,
+            duration:    0.1,
+            ease:        "none",
+            overwrite:   "auto",
+          });
+        }
+        // Text exits in first 25 % of scrubbed scroll progress
+        textTl.progress(Math.min(self.progress / 0.25, 1));
+      },
     });
 
-    return () => {
-      tl.kill();
-      ScrollTrigger.getAll().forEach(t => t.kill());
-    };
+    return () => ScrollTrigger.getAll().forEach(t => t.kill());
   }, []);
 
   return (
@@ -490,7 +481,7 @@ function HeroSection({ services, barbers, openBooking }) {
       ref={sectionRef}
       id="hero"
       data-testid="hero"
-      style={{ position: "relative", width: "100%", height: "100vh", overflow: "hidden", background: "#000" }}
+      style={{ position: "relative", zIndex: 10, width: "100%", height: "100vh", overflow: "hidden", background: "#000" }}
     >
       {/*
        * 2. True fullscreen video — explicit px/% coords so it never collapses.
