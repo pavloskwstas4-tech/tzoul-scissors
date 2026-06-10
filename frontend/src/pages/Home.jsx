@@ -427,70 +427,42 @@ function HeroSection({ services, barbers, openBooking }) {
     const video   = videoRef.current;
     const section = sectionRef.current;
 
-    // SCROLL_LENGTHS: viewport-heights of scroll track to play full video.
-    // Increase for a longer, slower experience.
-    const SCROLL_LENGTHS = 5;
+    video.load();
 
-    // TEXT_EXIT_FRAC: fraction of scroll progress at which text is fully gone.
-    const TEXT_EXIT_FRAC = 0.28;
+    const SCROLL_LENGTHS = 12;               // ← 12× viewport height — slow, cinematic
+    const TOTAL_DUR      = 10;               // timeline units (ratio matters, not value)
+    const TEXT_END       = TOTAL_DUR * 0.28; // text gone at 28 % of scroll
 
-    // Build the paused text timeline upfront
-    const textTl = gsap.timeline({ paused: true })
-      .to(cornerLRef.current,  { x: -140, opacity: 0, ease: "none" }, 0)
-      .to(cornerRRef.current,  { x:  140, opacity: 0, ease: "none" }, 0)
-      .to(wordLRef.current,    { xPercent: -150, opacity: 0, ease: "none" }, 0)
-      .to(wordRRef.current,    { xPercent:  150, opacity: 0, ease: "none" }, 0)
-      .to(subtitleRef.current, { opacity: 0, y: 10,  ease: "none", duration: 0.15 }, 0)
-      .to(bottomRef.current,   { opacity: 0, y: 32,  ease: "none", duration: 0.15 }, 0);
+    /* ── Proxy: GSAP tweens pct 0→1; onUpdate maps to video.currentTime ────
+     * This avoids needing video.duration at creation time — resolves lazily. */
+    const proxy = { pct: 0 };
 
-    // ── Create pin IMMEDIATELY — do not wait for video metadata ────────────
-    // The video scrub degrades gracefully if duration isn't ready yet.
-    /*
-     * VIDEO COMPRESSION GUIDE
-     * ─────────────────────────────────────────────────────────────────────
-     * If scrubbing still feels laggy, the bottleneck is the video file, not
-     * the code. Browsers must seek to a keyframe before decoding the target
-     * frame, so a video with infrequent keyframes (e.g. every 5 s) will
-     * stutter heavily on scrub.
-     *
-     * OPTION A — All-I-frame (perfect seek, large file ~3–5× bigger):
-     *   ffmpeg -i input.mp4 \
-     *     -c:v libx264 -preset slow -crf 18 \
-     *     -g 1 -bf 0 \
-     *     -pix_fmt yuv420p -movflags +faststart \
-     *     -an output_scrub.mp4
-     *   • -g 1   → every frame is a keyframe (instant seek anywhere)
-     *   • -bf 0  → no B-frames (helps decoders on mobile)
-     *   • -an    → strip audio (background video; saves bandwidth)
-     *   • +faststart → moves metadata to front for fast network playback
-     *
-     * OPTION B — Dense keyframes (good balance, ~20–30 % bigger than default):
-     *   ffmpeg -i input.mp4 \
-     *     -c:v libx264 -preset slow -crf 23 \
-     *     -g 10 -bf 0 \
-     *     -pix_fmt yuv420p -movflags +faststart \
-     *     -an output_scrub.mp4
-     *   • -g 10  → keyframe every 10 frames (~0.33 s at 30 fps)
-     *
-     * OPTION C — WebM/VP9 (best compression + seek, wider modern support):
-     *   ffmpeg -i input.mp4 \
-     *     -c:v libvpx-vp9 -b:v 0 -crf 30 \
-     *     -g 10 -deadline best \
-     *     -pix_fmt yuv420p \
-     *     -an output_scrub.webm
-     *   Then add a second <source> tag in JSX:
-     *   <source src="output_scrub.webm" type="video/webm" />  ← first (preferred)
-     *   <source src="output_scrub.mp4"  type="video/mp4"  />  ← fallback
-     *
-     * RESOLUTION TIP: Scale to max 1920 px wide before encoding:
-     *   ffmpeg -i input.mp4 -vf "scale=1920:-2" ...rest of flags...
-     * ─────────────────────────────────────────────────────────────────────
-     */
+    const tl = gsap.timeline();
 
-    // rAF gate — ensures gsap.to fires at most once per paint frame,
-    // even if the scroll event fires many times between frames.
-    let rafId = null;
+    // Video proxy — full timeline length
+    tl.to(proxy, {
+      pct:      1,
+      ease:     "none",
+      duration: TOTAL_DUR,
+      onUpdate() {
+        const dur = video.duration;
+        if (dur && isFinite(dur)) {
+          video.currentTime = Math.min(proxy.pct * dur, dur - 0.001);
+        }
+      },
+    }, 0);
 
+    // Text exits during first TEXT_END units (28 % of total)
+    tl.to(wordLRef.current,    { xPercent: -150, opacity: 0, ease: "none", duration: TEXT_END }, 0)
+      .to(wordRRef.current,    { xPercent:  150, opacity: 0, ease: "none", duration: TEXT_END }, 0)
+      .to(cornerLRef.current,  { x: -140, opacity: 0, ease: "none", duration: TEXT_END * 0.7 }, 0)
+      .to(cornerRRef.current,  { x:  140, opacity: 0, ease: "none", duration: TEXT_END * 0.7 }, 0)
+      .to(subtitleRef.current, { opacity: 0, y: 10, ease: "none", duration: TEXT_END * 0.5 }, 0)
+      .to(bottomRef.current,   { opacity: 0, y: 32, ease: "none", duration: TEXT_END * 0.5 }, 0);
+
+    /* ── ScrollTrigger drives the entire timeline via scrub: 2.5 ────────────
+     * GSAP's own ticker applies 2.5 s of inertia lag — zero rAF conflicts,
+     * zero competing tweens, buttery cinematic feel.                        */
     ScrollTrigger.create({
       trigger:             section,
       start:               "top top",
@@ -498,34 +470,13 @@ function HeroSection({ services, barbers, openBooking }) {
       pin:                 true,
       pinSpacing:          true,
       anticipatePin:       1,
+      scrub:               2.5,
+      animation:           tl,
       invalidateOnRefresh: true,
-      onUpdate(self) {
-        const dur = video.duration;
-        const progress = self.progress;
-
-        // Always update text instantly (no video decode cost)
-        textTl.progress(Math.min(progress / TEXT_EXIT_FRAC, 1));
-
-        // Throttle video seek to one tween per animation frame
-        if (!dur || !isFinite(dur)) return;
-        if (rafId) cancelAnimationFrame(rafId);
-        rafId = requestAnimationFrame(() => {
-          gsap.to(video, {
-            currentTime: progress * dur,
-            duration: 0.1,
-            ease: "power1.out",
-            overwrite: "auto",
-          });
-          rafId = null;
-        });
-      },
     });
 
-    // Kick off network fetch so metadata arrives ASAP
-    video.load();
-
     return () => {
-      if (rafId) cancelAnimationFrame(rafId);
+      tl.kill();
       ScrollTrigger.getAll().forEach(t => t.kill());
     };
   }, []);
