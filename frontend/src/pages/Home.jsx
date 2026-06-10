@@ -494,7 +494,7 @@ function HeroSection({ services, barbers, openBooking }) {
         webkit-playsinline="true"
         style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover", zIndex: 1 }}
       >
-        <source src="https://customer-assets.emergentagent.com/job_tzoul-build-1/artifacts/wsanky2s_Metallic_hair_cutting_scissor_ro%E2%80%A6_202606072121.mp4" type="video/mp4" />
+        <source src="https://customer-assets.emergentagent.com/job_tzoul-build-1/artifacts/g56afb01_Metallic_hair_cutting_scissor_ro%E2%80%A6_202606100916.mp4" type="video/mp4" />
       </video>
 
       {/* Dim overlay */}
