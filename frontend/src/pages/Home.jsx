@@ -408,13 +408,12 @@ function ContactCard({ icon, label, value, href, testid }) {
 
 /* ---------------------------------------------------------------------------
  * HeroSection — Scroll-driven video scrub with text split animation.
- * The section is PINNED until the video finishes playing via scroll.
- * Text splits left/right as the user starts scrolling.
+ * PINNED until video completes. Text splits left/right on first scroll.
  *
- * Tuning knobs (comments inline):
- *   SCROLL_LENGTHS  — how many viewport-heights of scroll track the video needs
- *   TEXT_EXIT_FRAC  — fraction of scroll at which text is fully gone (0-1)
- *   scrub           — GSAP lag in seconds (lower = more responsive)
+ * Tuning:
+ *   SCROLL_LENGTHS  — viewport-heights of scroll track to play full video
+ *   TEXT_EXIT_FRAC  — fraction of scroll at which text is fully gone (0–1)
+ *   scrub           — GSAP lag seconds (lower = more responsive)
  * ------------------------------------------------------------------------- */
 function HeroSection({ services, barbers, openBooking }) {
   void services; void barbers;
@@ -436,43 +435,38 @@ function HeroSection({ services, barbers, openBooking }) {
       const dur = video.duration;
       if (!dur || !isFinite(dur)) return;
 
-      /* ── How much scroll is needed to play the full video ──────────────────
-       * Each unit = 1 viewport height of scroll distance.
-       * Increase to give users more time to absorb the video.               */
-      const SCROLL_LENGTHS  = 5;
+      const SCROLL_LENGTHS = 5;   // ← increase for slower / more dramatic reveal
+      const TEXT_EXIT_FRAC = 0.28; // ← text fully gone by 28 % of scroll
 
-      /* ── Text exits in the first X% of total scroll progress ──────────── */
-      const TEXT_EXIT_FRAC  = 0.28;
-
-      // Paused timeline that GSAP will scrub manually via onUpdate
       const textTl = gsap.timeline({ paused: true })
         .to(cornerLRef.current,  { x: -140, opacity: 0, ease: "none" }, 0)
         .to(cornerRRef.current,  { x:  140, opacity: 0, ease: "none" }, 0)
-        .to(wordLRef.current,    { x: "-40vw",           ease: "none" }, 0)
-        .to(wordRRef.current,    { x:  "40vw",           ease: "none" }, 0)
-        .to(subtitleRef.current, { opacity: 0, y: 10,   ease: "none" }, 0)
-        .to(bottomRef.current,   { opacity: 0, y: 32,   ease: "none" }, 0);
+        .to(wordLRef.current,    { x: "-40vw",          ease: "none" }, 0)
+        .to(wordRRef.current,    { x:  "40vw",          ease: "none" }, 0)
+        .to(subtitleRef.current, { opacity: 0, y: 10,  ease: "none" }, 0)
+        .to(bottomRef.current,   { opacity: 0, y: 32,  ease: "none" }, 0);
 
       ScrollTrigger.create({
-        trigger: section,
-        start:   "top top",
-        /* ── Total scroll track = SCROLL_LENGTHS × viewport height ──────── */
-        end:     () => `+=${window.innerHeight * SCROLL_LENGTHS}`,
-        pin:          true,
-        anticipatePin: 1,
-        /* ── scrub: 0.5 = 0.5 s catch-up lag; use scrub:true for instant── */
-        scrub:        0.5,
+        trigger:           section,
+        start:             "top top",
+        end:               () => `+=${window.innerHeight * SCROLL_LENGTHS}`,
+        pin:               true,
+        pinSpacing:        true,
+        anticipatePin:     1,
+        scrub:             0.5,
+        invalidateOnRefresh: true,
         onUpdate(self) {
-          // ── Video scrub ────────────────────────────────────────────────
           video.currentTime = Math.min(self.progress * dur, dur - 0.001);
-
-          // ── Text wipe (exits during first TEXT_EXIT_FRAC of scroll) ───
           textTl.progress(Math.min(self.progress / TEXT_EXIT_FRAC, 1));
         },
       });
+
+      ScrollTrigger.refresh();
     };
 
-    // Build as soon as metadata is ready (duration needed)
+    // Explicitly trigger metadata load (needed for CDN videos)
+    video.load();
+
     if (video.readyState >= 1) build();
     else video.addEventListener("loadedmetadata", build, { once: true });
 
@@ -480,13 +474,19 @@ function HeroSection({ services, barbers, openBooking }) {
   }, []);
 
   return (
+    /*
+     * IMPORTANT: strict height (not min-height) so GSAP pin-spacer gets the
+     * correct offsetHeight. All children use absolute positioning so they
+     * don't collapse when GSAP applies position:fixed during the pin.
+     */
     <section
       ref={sectionRef}
       id="hero"
       data-testid="hero"
-      className="relative bg-black overflow-hidden min-h-[100svh] flex flex-col"
+      className="relative bg-black overflow-hidden"
+      style={{ height: "100vh" }}
     >
-      {/* Video — no autoPlay/loop; scroll drives playback */}
+      {/* Video — scroll drives currentTime; no autoPlay/loop */}
       <video
         ref={videoRef}
         muted
@@ -498,8 +498,8 @@ function HeroSection({ services, barbers, openBooking }) {
       </video>
       <div className="absolute inset-0 bg-black/55" />
 
-      {/* Corner labels — exit left/right on scroll */}
-      <div className="relative z-10 pt-28 md:pt-32 px-5 md:px-10">
+      {/* Corner labels */}
+      <div className="absolute top-0 left-0 right-0 z-10 pt-28 md:pt-32 px-5 md:px-10">
         <div className="max-w-[1500px] mx-auto flex items-start justify-between">
           <div ref={cornerLRef} className="font-mono text-[0.58rem] uppercase tracking-[0.32em] text-white/50">
             "TZOUL" / VOL. 01 / DROP A
@@ -511,8 +511,8 @@ function HeroSection({ services, barbers, openBooking }) {
         </div>
       </div>
 
-      {/* Wordmark — split into "TZO" + "UL" for the left/right wipe */}
-      <div className="relative z-10 flex-1 flex items-center justify-center px-5 md:px-10">
+      {/* Wordmark — "TZO" exits left, "UL" exits right */}
+      <div className="absolute inset-0 z-10 flex items-center justify-center px-5 md:px-10" style={{ pointerEvents: "none" }}>
         <div className="w-full">
           <h1
             data-testid="hero-title"
@@ -534,8 +534,8 @@ function HeroSection({ services, barbers, openBooking }) {
         </div>
       </div>
 
-      {/* Bottom row — fades down on scroll */}
-      <div ref={bottomRef} className="relative z-10 px-5 md:px-10 pb-6 md:pb-8 pt-5">
+      {/* Bottom row */}
+      <div ref={bottomRef} className="absolute bottom-0 left-0 right-0 z-10 px-5 md:px-10 pb-6 md:pb-8">
         <div className="max-w-[1500px] mx-auto flex items-end justify-between gap-4">
           <div className="font-mono text-[0.56rem] uppercase tracking-[0.28em] text-white/40 leading-relaxed">
             © 2026 TZOUL / NO. 526 IRAKLEIOU
@@ -555,5 +555,3 @@ function HeroSection({ services, barbers, openBooking }) {
     </section>
   );
 }
-
-// end of file
