@@ -445,6 +445,52 @@ function HeroSection({ services, barbers, openBooking }) {
 
     // ── Create pin IMMEDIATELY — do not wait for video metadata ────────────
     // The video scrub degrades gracefully if duration isn't ready yet.
+    /*
+     * VIDEO COMPRESSION GUIDE
+     * ─────────────────────────────────────────────────────────────────────
+     * If scrubbing still feels laggy, the bottleneck is the video file, not
+     * the code. Browsers must seek to a keyframe before decoding the target
+     * frame, so a video with infrequent keyframes (e.g. every 5 s) will
+     * stutter heavily on scrub.
+     *
+     * OPTION A — All-I-frame (perfect seek, large file ~3–5× bigger):
+     *   ffmpeg -i input.mp4 \
+     *     -c:v libx264 -preset slow -crf 18 \
+     *     -g 1 -bf 0 \
+     *     -pix_fmt yuv420p -movflags +faststart \
+     *     -an output_scrub.mp4
+     *   • -g 1   → every frame is a keyframe (instant seek anywhere)
+     *   • -bf 0  → no B-frames (helps decoders on mobile)
+     *   • -an    → strip audio (background video; saves bandwidth)
+     *   • +faststart → moves metadata to front for fast network playback
+     *
+     * OPTION B — Dense keyframes (good balance, ~20–30 % bigger than default):
+     *   ffmpeg -i input.mp4 \
+     *     -c:v libx264 -preset slow -crf 23 \
+     *     -g 10 -bf 0 \
+     *     -pix_fmt yuv420p -movflags +faststart \
+     *     -an output_scrub.mp4
+     *   • -g 10  → keyframe every 10 frames (~0.33 s at 30 fps)
+     *
+     * OPTION C — WebM/VP9 (best compression + seek, wider modern support):
+     *   ffmpeg -i input.mp4 \
+     *     -c:v libvpx-vp9 -b:v 0 -crf 30 \
+     *     -g 10 -deadline best \
+     *     -pix_fmt yuv420p \
+     *     -an output_scrub.webm
+     *   Then add a second <source> tag in JSX:
+     *   <source src="output_scrub.webm" type="video/webm" />  ← first (preferred)
+     *   <source src="output_scrub.mp4"  type="video/mp4"  />  ← fallback
+     *
+     * RESOLUTION TIP: Scale to max 1920 px wide before encoding:
+     *   ffmpeg -i input.mp4 -vf "scale=1920:-2" ...rest of flags...
+     * ─────────────────────────────────────────────────────────────────────
+     */
+
+    // rAF gate — ensures gsap.to fires at most once per paint frame,
+    // even if the scroll event fires many times between frames.
+    let rafId = null;
+
     ScrollTrigger.create({
       trigger:             section,
       start:               "top top",
@@ -455,22 +501,33 @@ function HeroSection({ services, barbers, openBooking }) {
       invalidateOnRefresh: true,
       onUpdate(self) {
         const dur = video.duration;
-        if (dur && isFinite(dur)) {
+        const progress = self.progress;
+
+        // Always update text instantly (no video decode cost)
+        textTl.progress(Math.min(progress / TEXT_EXIT_FRAC, 1));
+
+        // Throttle video seek to one tween per animation frame
+        if (!dur || !isFinite(dur)) return;
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => {
           gsap.to(video, {
-            currentTime: self.progress * dur,
+            currentTime: progress * dur,
             duration: 0.1,
             ease: "power1.out",
             overwrite: "auto",
           });
-        }
-        textTl.progress(Math.min(self.progress / TEXT_EXIT_FRAC, 1));
+          rafId = null;
+        });
       },
     });
 
     // Kick off network fetch so metadata arrives ASAP
     video.load();
 
-    return () => ScrollTrigger.getAll().forEach(t => t.kill());
+    return () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      ScrollTrigger.getAll().forEach(t => t.kill());
+    };
   }, []);
 
   return (
