@@ -446,20 +446,19 @@ function HeroSection({ services, barbers, openBooking }) {
     // ── Create pin IMMEDIATELY — do not wait for video metadata ────────────
     // The video scrub degrades gracefully if duration isn't ready yet.
     ScrollTrigger.create({
-      trigger:            section,
-      start:              "top top",
-      end:                () => `+=${window.innerHeight * SCROLL_LENGTHS}`,
-      pin:                true,
-      pinSpacing:         true,
-      anticipatePin:      1,
-      scrub:              1.2,
+      trigger:             section,
+      start:               "top top",
+      end:                 () => `+=${window.innerHeight * SCROLL_LENGTHS}`,
+      pin:                 true,
+      pinSpacing:          true,
+      anticipatePin:       1,
       invalidateOnRefresh: true,
       onUpdate(self) {
         const dur = video.duration;
         if (dur && isFinite(dur)) {
           gsap.to(video, {
             currentTime: self.progress * dur,
-            duration: 0.5,
+            duration: 0.1,
             ease: "power1.out",
             overwrite: "auto",
           });
