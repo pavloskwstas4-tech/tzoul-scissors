@@ -407,13 +407,9 @@ function ContactCard({ icon, label, value, href, testid }) {
 
 
 /* ---------------------------------------------------------------------------
- * HeroSection — Scroll-driven video scrub with text split animation.
- * PINNED until video completes. Text splits left/right on first scroll.
- *
- * Tuning:
- *   SCROLL_LENGTHS  — viewport-heights of scroll track to play full video
- *   TEXT_EXIT_FRAC  — fraction of scroll at which text is fully gone (0–1)
- *   scrub           — GSAP lag seconds (lower = more responsive)
+ * HeroSection — Scroll-driven video scrub + text split.
+ * Layout: strict 100vh section → absolute video layer → absolute flex overlay.
+ * ScrollTrigger created IMMEDIATELY (no metadata wait) so pin is always active.
  * ------------------------------------------------------------------------- */
 function HeroSection({ services, barbers, openBooking }) {
   void services; void barbers;
@@ -431,126 +427,143 @@ function HeroSection({ services, barbers, openBooking }) {
     const video   = videoRef.current;
     const section = sectionRef.current;
 
-    const build = () => {
-      const dur = video.duration;
-      if (!dur || !isFinite(dur)) return;
+    // SCROLL_LENGTHS: viewport-heights of scroll track to play full video.
+    // Increase for a longer, slower experience.
+    const SCROLL_LENGTHS = 5;
 
-      const SCROLL_LENGTHS = 5;   // ← increase for slower / more dramatic reveal
-      const TEXT_EXIT_FRAC = 0.28; // ← text fully gone by 28 % of scroll
+    // TEXT_EXIT_FRAC: fraction of scroll progress at which text is fully gone.
+    const TEXT_EXIT_FRAC = 0.28;
 
-      const textTl = gsap.timeline({ paused: true })
-        .to(cornerLRef.current,  { x: -140, opacity: 0, ease: "none" }, 0)
-        .to(cornerRRef.current,  { x:  140, opacity: 0, ease: "none" }, 0)
-        .to(wordLRef.current,    { x: "-40vw",          ease: "none" }, 0)
-        .to(wordRRef.current,    { x:  "40vw",          ease: "none" }, 0)
-        .to(subtitleRef.current, { opacity: 0, y: 10,  ease: "none" }, 0)
-        .to(bottomRef.current,   { opacity: 0, y: 32,  ease: "none" }, 0);
+    // Build the paused text timeline upfront
+    const textTl = gsap.timeline({ paused: true })
+      .to(cornerLRef.current,  { x: -140, opacity: 0, ease: "none" }, 0)
+      .to(cornerRRef.current,  { x:  140, opacity: 0, ease: "none" }, 0)
+      .to(wordLRef.current,    { x: "-40vw",          ease: "none" }, 0)
+      .to(wordRRef.current,    { x:  "40vw",          ease: "none" }, 0)
+      .to(subtitleRef.current, { opacity: 0, y: 10,  ease: "none" }, 0)
+      .to(bottomRef.current,   { opacity: 0, y: 32,  ease: "none" }, 0);
 
-      ScrollTrigger.create({
-        trigger:           section,
-        start:             "top top",
-        end:               () => `+=${window.innerHeight * SCROLL_LENGTHS}`,
-        pin:               true,
-        pinSpacing:        true,
-        anticipatePin:     1,
-        scrub:             0.5,
-        invalidateOnRefresh: true,
-        onUpdate(self) {
+    // ── Create pin IMMEDIATELY — do not wait for video metadata ────────────
+    // The video scrub degrades gracefully if duration isn't ready yet.
+    ScrollTrigger.create({
+      trigger:            section,
+      start:              "top top",
+      end:                () => `+=${window.innerHeight * SCROLL_LENGTHS}`,
+      pin:                true,
+      pinSpacing:         true,
+      anticipatePin:      1,
+      scrub:              0.5,
+      invalidateOnRefresh: true,
+      onUpdate(self) {
+        // Video scrub — safe: only runs once duration is a valid finite number
+        const dur = video.duration;
+        if (dur && isFinite(dur)) {
           video.currentTime = Math.min(self.progress * dur, dur - 0.001);
-          textTl.progress(Math.min(self.progress / TEXT_EXIT_FRAC, 1));
-        },
-      });
+        }
+        // Text wipe — always active from first scroll tick
+        textTl.progress(Math.min(self.progress / TEXT_EXIT_FRAC, 1));
+      },
+    });
 
-      ScrollTrigger.refresh();
-    };
-
-    // Explicitly trigger metadata load (needed for CDN videos)
+    // Kick off network fetch so metadata arrives ASAP
     video.load();
-
-    if (video.readyState >= 1) build();
-    else video.addEventListener("loadedmetadata", build, { once: true });
 
     return () => ScrollTrigger.getAll().forEach(t => t.kill());
   }, []);
 
   return (
     /*
-     * IMPORTANT: strict height (not min-height) so GSAP pin-spacer gets the
-     * correct offsetHeight. All children use absolute positioning so they
-     * don't collapse when GSAP applies position:fixed during the pin.
+     * 1. Strict 100vh container — gives GSAP a reliable offsetHeight to measure.
+     *    overflow:hidden clips the text as it exits left/right.
      */
     <section
       ref={sectionRef}
       id="hero"
       data-testid="hero"
-      className="relative bg-black overflow-hidden"
-      style={{ height: "100vh" }}
+      style={{ position: "relative", width: "100%", height: "100vh", overflow: "hidden", background: "#000" }}
     >
-      {/* Video — scroll drives currentTime; no autoPlay/loop */}
+      {/*
+       * 2. True fullscreen video — explicit px/% coords so it never collapses.
+       */}
       <video
         ref={videoRef}
         muted
         playsInline
         preload="auto"
-        className="absolute inset-0 w-full h-full object-cover"
+        style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover", zIndex: 1 }}
       >
         <source src="https://customer-assets.emergentagent.com/job_tzoul-build-1/artifacts/wsanky2s_Metallic_hair_cutting_scissor_ro%E2%80%A6_202606072121.mp4" type="video/mp4" />
       </video>
-      <div className="absolute inset-0 bg-black/55" />
 
-      {/* Corner labels */}
-      <div className="absolute top-0 left-0 right-0 z-10 pt-28 md:pt-32 px-5 md:px-10">
-        <div className="max-w-[1500px] mx-auto flex items-start justify-between">
-          <div ref={cornerLRef} className="font-mono text-[0.58rem] uppercase tracking-[0.32em] text-white/50">
-            "TZOUL" / VOL. 01 / DROP A
-          </div>
-          <div ref={cornerRRef} className="hidden md:block font-mono text-[0.58rem] uppercase tracking-[0.32em] text-white/50 text-right">
-            FOR PRIVATE APPOINTMENT<br />
-            <span className="opacity-70">SCHEDULED · NOT WALKED-IN</span>
+      {/* Dim overlay */}
+      <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.55)", zIndex: 1 }} />
+
+      {/*
+       * 3. Single overlay content container — position:absolute fills the
+       *    100vh section, then uses flex-column internally so centering
+       *    and spacing work without breaking the pin.
+       */}
+      <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", zIndex: 2, display: "flex", flexDirection: "column" }}>
+
+        {/* Corner labels */}
+        <div style={{ padding: "7rem 2.5rem 0" }}>
+          <div className="max-w-[1500px] mx-auto flex items-start justify-between">
+            <div ref={cornerLRef} className="font-mono text-[0.58rem] uppercase tracking-[0.32em] text-white/50">
+              "TZOUL" / VOL. 01 / DROP A
+            </div>
+            <div ref={cornerRRef} className="hidden md:block font-mono text-[0.58rem] uppercase tracking-[0.32em] text-white/50 text-right">
+              FOR PRIVATE APPOINTMENT<br />
+              <span className="opacity-70">SCHEDULED · NOT WALKED-IN</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Wordmark — "TZO" exits left, "UL" exits right */}
-      <div className="absolute inset-0 z-10 flex items-center justify-center px-5 md:px-10" style={{ pointerEvents: "none" }}>
-        <div className="w-full">
-          <h1
-            data-testid="hero-title"
-            className="font-display font-black uppercase text-white text-center leading-[0.82] select-none"
-            style={{ fontFamily: "'Outfit', sans-serif", fontSize: "clamp(7rem, 28vw, 26rem)", letterSpacing: "-0.045em" }}
-          >
-            <span ref={wordLRef} className="inline-block">TZO</span>
-            <span ref={wordRRef} className="inline-block">
-              UL
-              <span aria-hidden="true" className="align-top text-white/40 font-mono"
-                style={{ fontSize: "0.18em", marginLeft: "0.05em", letterSpacing: "0.05em" }}>®</span>
-            </span>
-          </h1>
-          <div ref={subtitleRef} className="mt-3 md:mt-5 flex items-center justify-center gap-4 font-mono text-[0.62rem] md:text-xs uppercase tracking-[0.42em] text-white/50">
-            <span className="inline-block w-10 md:w-16 h-px bg-white/20" />
-            BARBER · ATHENS
-            <span className="inline-block w-10 md:w-16 h-px bg-white/20" />
+        {/* Wordmark — flex:1 centers it in the remaining space */}
+        <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 1.25rem" }}>
+          <div style={{ width: "100%" }}>
+            <h1
+              data-testid="hero-title"
+              className="font-display font-black uppercase text-white text-center select-none"
+              style={{ fontFamily: "'Outfit', sans-serif", fontSize: "clamp(7rem, 28vw, 26rem)", letterSpacing: "-0.045em", lineHeight: 0.82 }}
+            >
+              <span ref={wordLRef} style={{ display: "inline-block" }}>TZO</span>
+              <span ref={wordRRef} style={{ display: "inline-block" }}>
+                UL
+                <span aria-hidden="true" className="align-top text-white/40 font-mono"
+                  style={{ fontSize: "0.18em", marginLeft: "0.05em", letterSpacing: "0.05em" }}>®</span>
+              </span>
+            </h1>
+            <div
+              ref={subtitleRef}
+              className="font-mono uppercase text-white/50"
+              style={{ marginTop: "0.75rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "1rem", fontSize: "0.7rem", letterSpacing: "0.42em" }}
+            >
+              <span style={{ display: "inline-block", width: "3rem", height: "1px", background: "rgba(255,255,255,0.2)" }} />
+              BARBER · ATHENS
+              <span style={{ display: "inline-block", width: "3rem", height: "1px", background: "rgba(255,255,255,0.2)" }} />
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Bottom row */}
-      <div ref={bottomRef} className="absolute bottom-0 left-0 right-0 z-10 px-5 md:px-10 pb-6 md:pb-8">
-        <div className="max-w-[1500px] mx-auto flex items-end justify-between gap-4">
-          <div className="font-mono text-[0.56rem] uppercase tracking-[0.28em] text-white/40 leading-relaxed">
-            © 2026 TZOUL / NO. 526 IRAKLEIOU
-            <br className="hidden md:inline" />
-            <span className="hidden md:inline">★ 4.8 · 90 REVIEWS</span>
+        {/* Bottom row */}
+        <div ref={bottomRef} style={{ padding: "0 2.5rem 1.5rem" }}>
+          <div className="max-w-[1500px] mx-auto flex items-end justify-between gap-4">
+            <div className="font-mono text-[0.56rem] uppercase tracking-[0.28em] text-white/40 leading-relaxed">
+              © 2026 TZOUL / NO. 526 IRAKLEIOU
+              <br className="hidden md:inline" />
+              <span className="hidden md:inline">★ 4.8 · 90 REVIEWS</span>
+            </div>
+            <Magnetic strength={0.3}>
+              <button data-testid="hero-book-btn" onClick={openBooking}
+                className="btn-dark group flex items-center gap-3 px-6 py-3">
+                <span className="inline-block w-1.5 h-1.5 bg-white/60 rounded-full" aria-hidden="true" />
+                Book
+                <ArrowRight size={13} className="transition-transform group-hover:translate-x-1" />
+              </button>
+            </Magnetic>
           </div>
-          <Magnetic strength={0.3}>
-            <button data-testid="hero-book-btn" onClick={openBooking}
-              className="btn-dark group flex items-center gap-3 px-6 py-3">
-              <span className="inline-block w-1.5 h-1.5 bg-white/60 rounded-full" aria-hidden="true" />
-              Book
-              <ArrowRight size={13} className="transition-transform group-hover:translate-x-1" />
-            </button>
-          </Magnetic>
         </div>
+
       </div>
     </section>
   );
