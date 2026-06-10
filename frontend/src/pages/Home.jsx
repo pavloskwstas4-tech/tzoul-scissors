@@ -459,13 +459,13 @@ function HeroSection({ services, barbers, openBooking }) {
         if (dur && isFinite(dur)) {
           gsap.to(video, {
             currentTime: self.progress * dur,
-            duration:    0.1,
+            duration:    0.05,   // ultra-tight — matches fast seek of all-I-frame video
             ease:        "none",
             overwrite:   "auto",
           });
         }
-        // Text exits in first 25 % of scrubbed scroll progress
-        textTl.progress(Math.min(self.progress / 0.25, 1));
+        // Text exits in first 15 % of scrubbed scroll progress
+        textTl.progress(Math.min(self.progress / 0.15, 1));
       },
     });
 
