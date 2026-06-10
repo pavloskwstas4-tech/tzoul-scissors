@@ -438,10 +438,10 @@ function HeroSection({ services, barbers, openBooking }) {
     const textTl = gsap.timeline({ paused: true })
       .to(cornerLRef.current,  { x: -140, opacity: 0, ease: "none" }, 0)
       .to(cornerRRef.current,  { x:  140, opacity: 0, ease: "none" }, 0)
-      .to(wordLRef.current,    { x: "-40vw",          ease: "none" }, 0)
-      .to(wordRRef.current,    { x:  "40vw",          ease: "none" }, 0)
-      .to(subtitleRef.current, { opacity: 0, y: 10,  ease: "none" }, 0)
-      .to(bottomRef.current,   { opacity: 0, y: 32,  ease: "none" }, 0);
+      .to(wordLRef.current,    { xPercent: -150, opacity: 0, ease: "none" }, 0)
+      .to(wordRRef.current,    { xPercent:  150, opacity: 0, ease: "none" }, 0)
+      .to(subtitleRef.current, { opacity: 0, y: 10,  ease: "none", duration: 0.15 }, 0)
+      .to(bottomRef.current,   { opacity: 0, y: 32,  ease: "none", duration: 0.15 }, 0);
 
     // ── Create pin IMMEDIATELY — do not wait for video metadata ────────────
     // The video scrub degrades gracefully if duration isn't ready yet.
@@ -452,15 +452,18 @@ function HeroSection({ services, barbers, openBooking }) {
       pin:                true,
       pinSpacing:         true,
       anticipatePin:      1,
-      scrub:              0.5,
+      scrub:              1.2,
       invalidateOnRefresh: true,
       onUpdate(self) {
-        // Video scrub — safe: only runs once duration is a valid finite number
         const dur = video.duration;
         if (dur && isFinite(dur)) {
-          video.currentTime = Math.min(self.progress * dur, dur - 0.001);
+          gsap.to(video, {
+            currentTime: self.progress * dur,
+            duration: 0.5,
+            ease: "power1.out",
+            overwrite: "auto",
+          });
         }
-        // Text wipe — always active from first scroll tick
         textTl.progress(Math.min(self.progress / TEXT_EXIT_FRAC, 1));
       },
     });
@@ -490,6 +493,7 @@ function HeroSection({ services, barbers, openBooking }) {
         muted
         playsInline
         preload="auto"
+        webkit-playsinline="true"
         style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover", zIndex: 1 }}
       >
         <source src="https://customer-assets.emergentagent.com/job_tzoul-build-1/artifacts/wsanky2s_Metallic_hair_cutting_scissor_ro%E2%80%A6_202606072121.mp4" type="video/mp4" />
