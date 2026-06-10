@@ -407,15 +407,36 @@ function ContactCard({ icon, label, value, href, testid }) {
 
 
 /* ---------------------------------------------------------------------------
- * HeroSection — Scroll-driven video scrub + text split.
- * Layout: strict 100vh section → absolute video layer → absolute flex overlay.
- * ScrollTrigger created IMMEDIATELY (no metadata wait) so pin is always active.
- * ------------------------------------------------------------------------- */
+ * HeroSection — Canvas image-sequence scrub (Apple-style).
+ * Browser paints pre-loaded JPEG frames onto a canvas on every scroll tick.
+ * Zero video-decoder latency → buttery-smooth at any scrub speed.
+ *
+ * ── HOW TO PREPARE YOUR FRAMES ──────────────────────────────────────────
+ *
+ *  Step 1 — Extract frames with FFmpeg (run on your machine):
+ *
+ *    ffmpeg -i your_video.mp4 \
+ *      -vf "fps=30,scale=1920:-2" \
+ *      -q:v 2 \
+ *      frame_%03d.jpg
+ *
+ *    Flags:
+ *      fps=30          → 30 frames per second (3 s clip = 90 frames)
+ *      scale=1920:-2   → resize to 1920 px wide, keep aspect ratio
+ *      -q:v 2          → JPEG quality (1 = best, 4 = good balance)
+ *      frame_%03d.jpg  → output: frame_001.jpg … frame_090.jpg
+ *
+ *  Step 2 — Upload the frames to your CDN / assets bucket.
+ *
+ *  Step 3 — Update FRAME_COUNT and FRAME_URL below to match.
+ *
+ * ────────────────────────────────────────────────────────────────────── */
 function HeroSection({ services, barbers, openBooking }) {
   void services; void barbers;
 
   const sectionRef  = useRef(null);
-  const videoRef    = useRef(null);
+  const canvasRef   = useRef(null);   // canvas replaces <video>
+  const framesRef   = useRef([]);     // pre-loaded Image objects
   const cornerLRef  = useRef(null);
   const cornerRRef  = useRef(null);
   const wordLRef    = useRef(null);
@@ -424,12 +445,53 @@ function HeroSection({ services, barbers, openBooking }) {
   const bottomRef   = useRef(null);
 
   useEffect(() => {
-    const video   = videoRef.current;
+    const canvas  = canvasRef.current;
     const section = sectionRef.current;
+    const ctx     = canvas.getContext('2d');
 
-    video.load();
+    // ── CONFIGURE THESE TO MATCH YOUR EXPORTED FRAMES ───────────────────
+    // FRAME_COUNT : total number of JPEG frames you exported
+    // FRAME_URL   : function that returns the URL for frame i (0-indexed)
+    const FRAME_COUNT = 90;
+    const FRAME_URL   = (i) =>
+      `https://customer-assets.emergentagent.com/job_tzoul-build-1/artifacts/frames/frame_${String(i + 1).padStart(3, "0")}.jpg`;
+    // ────────────────────────────────────────────────────────────────────
 
-    // ── Text exit timeline (paused; driven manually via onUpdate) ────────────
+    // Size canvas pixels to match its CSS size (100 vw × 100 vh)
+    const resizeCanvas = () => {
+      canvas.width  = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    };
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+
+    // Draw one frame with object-fit:cover maths
+    const drawFrame = (rawIndex) => {
+      const idx = Math.max(0, Math.min(Math.round(rawIndex), FRAME_COUNT - 1));
+      const img = framesRef.current[idx];
+      if (!img || !img.complete || !img.naturalWidth) return;
+      const cw = canvas.width, ch = canvas.height;
+      const scale = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
+      const x = (cw - img.naturalWidth  * scale) / 2;
+      const y = (ch - img.naturalHeight * scale) / 2;
+      ctx.clearRect(0, 0, cw, ch);
+      ctx.drawImage(img, x, y, img.naturalWidth * scale, img.naturalHeight * scale);
+    };
+
+    // Pre-load every frame — browser caches them in RAM for instant access
+    const frames = new Array(FRAME_COUNT).fill(null);
+    framesRef.current = frames;
+    for (let i = 0; i < FRAME_COUNT; i++) {
+      const img  = new Image();
+      img.src    = FRAME_URL(i);
+      img.onload = () => {
+        frames[i] = img;
+        if (i === 0) drawFrame(0); // show first frame as soon as it arrives
+      };
+      frames[i] = img;
+    }
+
+    // Text exit timeline (paused; GSAP scrub drives it via onUpdate)
     const textTl = gsap.timeline({ paused: true })
       .to(wordLRef.current,    { xPercent: -150, opacity: 0, ease: "none" }, 0)
       .to(wordRRef.current,    { xPercent:  150, opacity: 0, ease: "none" }, 0)
@@ -438,11 +500,6 @@ function HeroSection({ services, barbers, openBooking }) {
       .to(subtitleRef.current, { opacity: 0, y: 10, ease: "none" }, 0)
       .to(bottomRef.current,   { opacity: 0, y: 32, ease: "none" }, 0);
 
-    // ── ScrollTrigger ────────────────────────────────────────────────────────
-    // scrub: 2.5 on the ScrollTrigger (NOT on an animation) means GSAP's
-    // internal inertia tween catches up to raw scroll over 2.5 s.
-    // self.progress in onUpdate IS the smoothed value — the inertia is already
-    // baked in before we touch the video or text.
     ScrollTrigger.create({
       trigger:             section,
       start:               "top top",
@@ -450,61 +507,39 @@ function HeroSection({ services, barbers, openBooking }) {
       pin:                 true,
       pinSpacing:          true,
       anticipatePin:       1,
-      scrub:               2.5,
+      scrub:               2.5,   // inertia smoothing — all easing done here
       invalidateOnRefresh: true,
       onUpdate(self) {
-        // Video: near-instant tween (0.1 s) on top of the already-smoothed
-        // scrub progress. overwrite:"auto" kills any in-flight tween first.
-        const dur = video.duration;
-        if (dur && isFinite(dur)) {
-          gsap.to(video, {
-            currentTime: self.progress * dur,
-            duration:    0.05,   // ultra-tight — matches fast seek of all-I-frame video
-            ease:        "none",
-            overwrite:   "auto",
-          });
-        }
-        // Text exits in first 15 % of scrubbed scroll progress
+        // self.progress is already smooth (scrub: 2.5) — draw directly, no inner tween
+        drawFrame(self.progress * (FRAME_COUNT - 1));
+        // Text exits in first 15 % of scroll
         textTl.progress(Math.min(self.progress / 0.15, 1));
       },
     });
 
-    return () => ScrollTrigger.getAll().forEach(t => t.kill());
+    return () => {
+      window.removeEventListener("resize", resizeCanvas);
+      ScrollTrigger.getAll().forEach(t => t.kill());
+    };
   }, []);
 
   return (
-    /*
-     * 1. Strict 100vh container — gives GSAP a reliable offsetHeight to measure.
-     *    overflow:hidden clips the text as it exits left/right.
-     */
     <section
       ref={sectionRef}
       id="hero"
       data-testid="hero"
       style={{ position: "relative", zIndex: 10, width: "100%", height: "100vh", overflow: "hidden", background: "#000" }}
     >
-      {/*
-       * 2. True fullscreen video — explicit px/% coords so it never collapses.
-       */}
-      <video
-        ref={videoRef}
-        muted
-        playsInline
-        preload="auto"
-        webkit-playsinline="true"
-        style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover", zIndex: 1 }}
-      >
-        <source src="https://customer-assets.emergentagent.com/job_tzoul-build-1/artifacts/g56afb01_Metallic_hair_cutting_scissor_ro%E2%80%A6_202606100916.mp4" type="video/mp4" />
-      </video>
+      {/* Canvas — image sequence painted here; covers section like object-fit:cover */}
+      <canvas
+        ref={canvasRef}
+        style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", zIndex: 1 }}
+      />
 
       {/* Dim overlay */}
       <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.55)", zIndex: 1 }} />
 
-      {/*
-       * 3. Single overlay content container — position:absolute fills the
-       *    100vh section, then uses flex-column internally so centering
-       *    and spacing work without breaking the pin.
-       */}
+      {/* Content overlay — single absolute container, flex-column inside */}
       <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", zIndex: 2, display: "flex", flexDirection: "column" }}>
 
         {/* Corner labels */}
@@ -520,7 +555,7 @@ function HeroSection({ services, barbers, openBooking }) {
           </div>
         </div>
 
-        {/* Wordmark — flex:1 centers it in the remaining space */}
+        {/* Wordmark */}
         <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 1.25rem" }}>
           <div style={{ width: "100%" }}>
             <h1
