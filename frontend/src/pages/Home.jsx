@@ -44,7 +44,7 @@ export default function Home() {
           marginTop:-300vh pulls site-body up to start overlapping the pin spacer
           at ~33 % of the 6-screen track (scrollY = 2×vh), fully covering at
           ~50 % (scrollY = 3×vh) while the canvas animation is still playing. */}
-      <div className="relative z-[20] bg-white" data-testid="site-body" style={{ marginTop: "-300vh" }}>
+      <div className="relative z-[20] bg-[#1D1D1F]" data-testid="site-body" style={{ marginTop: "-300vh", borderRadius: "2.5rem 2.5rem 0 0", boxShadow: "0 -40px 100px rgba(0,0,0,0.55)", overflow: "hidden" }}>
 
       {/* STYLE FINDER CTA */}
       <Reveal>
@@ -214,9 +214,9 @@ export default function Home() {
 
       {/* GALLERY */}
       <Reveal>
-        <section id="gallery" className="py-14 md:py-20 bg-white" data-testid="gallery-section">
+        <section id="gallery" className="py-10 md:py-14 bg-white" data-testid="gallery-section">
           <div className="max-w-[1500px] mx-auto px-5 md:px-8">
-            <div className="reveal flex flex-col md:flex-row md:items-end md:justify-between gap-3 mb-8">
+            <div className="reveal flex flex-col md:flex-row md:items-end md:justify-between gap-3 mb-5">
               <div>
                 <h2 className="title-massive text-3xl md:text-5xl lg:text-6xl mt-2">The Plates.</h2>
               </div>
@@ -229,14 +229,16 @@ export default function Home() {
               </a>
             </div>
 
-            <div className="grid grid-cols-12 gap-4">
-              <div className="col-span-12 md:col-span-8 rounded-xl overflow-hidden"><ParallaxImage src={SHOP_IMAGES.storefront} alt="Storefront" label="Plate · 01" height={420} /></div>
-              <div className="col-span-12 md:col-span-4 rounded-xl overflow-hidden"><ParallaxImage src={SHOP_IMAGES.interior1} alt="Chairs" label="Plate · 02" height={420} /></div>
-              <div className="col-span-6 md:col-span-4 rounded-xl overflow-hidden"><ParallaxImage src={SHOP_IMAGES.interior2} alt="Lounge" label="Plate · 03" height={280} /></div>
-              <div className="col-span-6 md:col-span-4 rounded-xl overflow-hidden"><ParallaxImage src={STOCK.razor} alt="Tools" label="Plate · 04" height={280} /></div>
-              <div className="col-span-12 md:col-span-4 rounded-xl overflow-hidden"><ParallaxImage src={SHOP_IMAGES.staircase} alt="Mural" label="Plate · 05" height={280} /></div>
-              <div className="col-span-6 md:col-span-5 rounded-xl overflow-hidden"><ParallaxImage src={STOCK.beardCloseup} alt="Beard" label="Plate · 06" height={260} /></div>
-              <div className="col-span-6 md:col-span-7 rounded-xl overflow-hidden"><ParallaxImage src={SHOP_IMAGES.exterior} alt="Exterior" label="Plate · 07" height={260} /></div>
+            <div className="grid grid-cols-12 gap-3">
+              {/* Row 1 — 3 images */}
+              <div className="col-span-12 md:col-span-5 rounded-xl overflow-hidden"><ParallaxImage src={SHOP_IMAGES.storefront} alt="Storefront" label="Plate · 01" height={200} /></div>
+              <div className="col-span-6 md:col-span-4 rounded-xl overflow-hidden"><ParallaxImage src={SHOP_IMAGES.interior1} alt="Chairs" label="Plate · 02" height={200} /></div>
+              <div className="col-span-6 md:col-span-3 rounded-xl overflow-hidden"><ParallaxImage src={SHOP_IMAGES.interior2} alt="Lounge" label="Plate · 03" height={200} /></div>
+              {/* Row 2 — 4 images */}
+              <div className="col-span-6 md:col-span-3 rounded-xl overflow-hidden"><ParallaxImage src={STOCK.razor} alt="Tools" label="Plate · 04" height={175} /></div>
+              <div className="col-span-6 md:col-span-3 rounded-xl overflow-hidden"><ParallaxImage src={SHOP_IMAGES.staircase} alt="Mural" label="Plate · 05" height={175} /></div>
+              <div className="col-span-6 md:col-span-3 rounded-xl overflow-hidden"><ParallaxImage src={STOCK.beardCloseup} alt="Beard" label="Plate · 06" height={175} /></div>
+              <div className="col-span-6 md:col-span-3 rounded-xl overflow-hidden"><ParallaxImage src={SHOP_IMAGES.exterior} alt="Exterior" label="Plate · 07" height={175} /></div>
             </div>
           </div>
         </section>
@@ -355,7 +357,8 @@ export default function Home() {
           </div>
         </div>
       </section>
-      </div>{/* /site-body curtain */}
+
+</div>{/* /site-body curtain */}
     </>
   );
 }
@@ -556,7 +559,7 @@ function HeroSection({ services, barbers, openBooking }) {
           end:                 () => "+=" + (window.innerHeight * 6),
           pin:                 true,
           pinSpacing:          true,
-          scrub:               2, // enough damping to absorb browser hiccups smoothly
+          scrub:               2,
           invalidateOnRefresh: true,
           onRefresh:           () => { resizeCanvas(); drawFrame(frameProxy.value); },
         },
@@ -566,7 +569,7 @@ function HeroSection({ services, barbers, openBooking }) {
       tl.to(wordLRef.current,    { xPercent: -150, opacity: 0, ease: "none", duration: TEXT_EXIT_AT }, 0)
         .to(wordRRef.current,    { xPercent:  150, opacity: 0, ease: "none", duration: TEXT_EXIT_AT }, 0)
         .to(cornerLRef.current,  { x: -140, opacity: 0, ease: "none", duration: TEXT_EXIT_AT }, 0)
-        .to(cornerRRef.current,  { x:  140, opacity: 0, ease: "none", duration: TEXT_EXIT_AT }, 0)
+        .to(cornerRRef.current,  { opacity: 0, ease: "none", duration: 0.06 }, 0)
         .to(subtitleRef.current, { opacity: 0, y: 10, ease: "none", duration: TEXT_EXIT_AT }, 0)
         .to(bottomRef.current,   { opacity: 0, y: 32, ease: "none", duration: TEXT_EXIT_AT }, 0)
         // 0 → 65 %: scrub only updates frameProxy.value — ticker handles the draw
@@ -642,10 +645,7 @@ function HeroSection({ services, barbers, openBooking }) {
 
         {/* Corner labels */}
         <div style={{ padding: "7rem 2.5rem 0" }}>
-          <div className="max-w-[1500px] mx-auto flex items-start justify-between">
-            <div ref={cornerLRef} className="font-mono text-[0.58rem] uppercase tracking-[0.32em] text-white/50">
-              "TZOUL" / VOL. 01 / DROP A
-            </div>
+          <div className="max-w-[1500px] mx-auto flex items-start justify-end">
             <div ref={cornerRRef} className="hidden md:block font-mono text-[0.58rem] uppercase tracking-[0.32em] text-white/50 text-right">
               FOR PRIVATE APPOINTMENT<br />
               <span className="opacity-70">SCHEDULED · NOT WALKED-IN</span>
@@ -682,12 +682,7 @@ function HeroSection({ services, barbers, openBooking }) {
 
         {/* Bottom row */}
         <div ref={bottomRef} style={{ padding: "0 2.5rem 1.5rem" }}>
-          <div className="max-w-[1500px] mx-auto flex items-end justify-between gap-4">
-            <div className="font-mono text-[0.56rem] uppercase tracking-[0.28em] text-white/40 leading-relaxed">
-              © 2026 TZOUL / NO. 526 IRAKLEIOU
-              <br className="hidden md:inline" />
-              <span className="hidden md:inline">★ 4.8 · 90 REVIEWS</span>
-            </div>
+          <div className="max-w-[1500px] mx-auto flex items-end justify-end gap-4">
             <Magnetic strength={0.3}>
               <button data-testid="hero-book-btn" onClick={openBooking}
                 className="btn-dark group flex items-center gap-3 px-6 py-3">

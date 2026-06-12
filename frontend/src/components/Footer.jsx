@@ -13,7 +13,7 @@ export default function Footer() {
   useEffect(() => { axios.get(`${API}/business`).then((r) => setBiz(r.data)).catch(() => {}); }, []);
 
   return (
-    <footer data-testid="site-footer" className="bg-[#0F172A] text-white border-t-2 border-[#0F172A]">
+    <footer data-testid="site-footer" className="bg-[#E63329] text-white border-t-2 border-[#E63329]">
       <div className="max-w-[1500px] mx-auto px-5 md:px-8 pt-12 md:pt-16 pb-8">
         <div className="flex items-end justify-between flex-wrap gap-6">
           <div className="font-display leading-tight text-[18vw] md:text-[12vw] lg:text-[9rem] text-white">
@@ -57,8 +57,9 @@ export default function Footer() {
           </FCol>
         </div>
 
-        <div className="mt-8 pt-4 border-t border-white/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 font-mono text-[0.62rem] uppercase tracking-wider text-white/45">
+        <div className="mt-8 pt-4 border-t border-white/10 relative flex flex-col md:flex-row items-center justify-between gap-3 font-mono text-[0.62rem] uppercase tracking-wider text-white/45">
           <span>© {new Date().getFullYear()} TZOUL BARBER. All rights reserved.</span>
+          <span className="md:absolute md:left-1/2 md:-translate-x-1/2">Made by Konidas</span>
           <span>Athens · Greece</span>
         </div>
       </div>
