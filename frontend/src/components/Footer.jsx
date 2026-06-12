@@ -19,12 +19,12 @@ export default function Footer() {
           <div className="font-display leading-tight text-[18vw] md:text-[12vw] lg:text-[9rem] text-white">
             TZOUL<span className="inline-block w-[0.18em] h-[0.18em] bg-white/30 rounded-sm align-baseline ml-2" />
           </div>
-          <div className="font-mono text-[0.66rem] uppercase tracking-wider text-white/55 text-right">
+          <div className="font-mono text-[0.66rem] uppercase tracking-wider text-white/80 text-right">
             <div>Est. 2019 — Athens, GR</div>
           </div>
         </div>
 
-        <div className="mt-10 pt-8 border-t border-white/10 grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="mt-10 pt-8 border-t border-white/30 grid grid-cols-1 md:grid-cols-4 gap-8">
           <FCol label="Address" testid="footer-address">
             <a href={biz ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(biz.address)}` : "#"} target="_blank" rel="noreferrer" className="flex items-start gap-2 text-white/85 hover:text-[#38BDF8] transition-colors">
               <MapPin size={13} className="mt-1 shrink-0" />
@@ -57,7 +57,7 @@ export default function Footer() {
           </FCol>
         </div>
 
-        <div className="mt-8 pt-4 border-t border-white/10 relative flex flex-col md:flex-row items-center justify-between gap-3 font-mono text-[0.62rem] uppercase tracking-wider text-white/45">
+        <div className="mt-8 pt-4 border-t border-white/30 relative flex flex-col md:flex-row items-center justify-between gap-3 font-mono text-[0.62rem] uppercase tracking-wider text-white/80">
           <span>© {new Date().getFullYear()} TZOUL BARBER. All rights reserved.</span>
           <span className="md:absolute md:left-1/2 md:-translate-x-1/2">Made by Konidas</span>
           <span>Athens · Greece</span>
@@ -70,8 +70,8 @@ export default function Footer() {
 function FCol({ label, children, testid }) {
   return (
     <div data-testid={testid}>
-      <div className="font-mono text-[0.62rem] uppercase tracking-wider text-white/40 mb-3 flex items-center gap-2">
-        <span className="text-[#38BDF8]">¦</span> {label}
+      <div className="font-mono text-[0.62rem] uppercase tracking-wider text-white/75 mb-3 flex items-center gap-2">
+        <span className="text-white/90">¦</span> {label}
       </div>
       <div className="leading-relaxed">{children}</div>
     </div>

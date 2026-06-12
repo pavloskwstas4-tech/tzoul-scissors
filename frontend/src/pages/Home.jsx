@@ -23,6 +23,7 @@ export default function Home() {
   const [biz, setBiz] = useState(null);
   const [instagramPosts, setInstagramPosts] = useState([]);
   const [styleFinderOpen, setStyleFinderOpen] = useState(false);
+  const [heroReady, setHeroReady] = useState(false);
   const { openBooking } = useBooking();
 
   useEffect(() => {
@@ -32,23 +33,53 @@ export default function Home() {
     axios.get(`${API}/instagram-posts`).then((r) => setInstagramPosts(r.data)).catch(() => {});
   }, []);
 
+  // Stacking-cards via ScrollTrigger pinning (NOT position:sticky — body has
+  // overflow-x:hidden which silently disables sticky). Each card pins in place
+  // when fully scrolled into view and stays stationary while the next card
+  // slides up over it (pinSpacing:false = no gap reserved, so followers overlap).
+  // Tall cards pin at 'bottom bottom' so all their content is readable first.
+  // Gated on heroReady: these pins MUST be created after the hero's pin spacer
+  // exists, otherwise their start positions are measured against the wrong
+  // layout (site-body's -300vh margin puts the cards at negative scroll
+  // positions until the hero reserves its 6-screen track).
+  useEffect(() => {
+    if (!heroReady) return;
+    const ctx = gsap.context(() => {
+      const cards = gsap.utils.toArray('[data-stack]');
+      cards.forEach((card, i) => {
+        if (i === cards.length - 1) return; // last card has nothing sliding over it
+        ScrollTrigger.create({
+          trigger: card,
+          start: () => (card.offsetHeight <= window.innerHeight ? 'top top' : 'bottom bottom'),
+          endTrigger: cards[cards.length - 1],
+          end: 'top top',
+          pin: true,
+          pinSpacing: false,
+          invalidateOnRefresh: true,
+        });
+      });
+    });
+    return () => ctx.revert();
+  }, [heroReady]);
+
   return (
     <>
       <BookingModal />
       <StyleFinder open={styleFinderOpen} onClose={() => setStyleFinderOpen(false)} />
 
       {/* HERO — Canvas image-sequence scrub (preload-gated, Apple-style) */}
-      <HeroSection services={services} barbers={barbers} openBooking={openBooking} />
+      <HeroSection services={services} barbers={barbers} openBooking={openBooking} onReady={() => setHeroReady(true)} />
 
       {/* SITE BODY — the curtain. z-20 + solid background so it covers the hero.
           marginTop:-300vh pulls site-body up to start overlapping the pin spacer
           at ~33 % of the 6-screen track (scrollY = 2×vh), fully covering at
           ~50 % (scrollY = 3×vh) while the canvas animation is still playing. */}
-      <div className="relative z-[20] bg-[#1D1D1F]" data-testid="site-body" style={{ marginTop: "-300vh", borderRadius: "2.5rem 2.5rem 0 0", boxShadow: "0 -40px 100px rgba(0,0,0,0.55)", overflow: "hidden" }}>
+      <div className="relative z-[20] bg-[#1D1D1F]" data-testid="site-body" style={{ marginTop: "-300vh", borderRadius: "2.5rem 2.5rem 0 0", boxShadow: "0 -40px 100px rgba(0,0,0,0.55)" }}>
 
       {/* STYLE FINDER CTA */}
+      <div data-stack style={{ position: "relative", zIndex: 1, borderRadius: "2.5rem 2.5rem 0 0", overflow: "hidden" }}>
       <Reveal>
-        <section id="style-finder" className="py-14 md:py-20 bg-[#1D1D1F] text-white relative overflow-hidden" data-testid="style-finder-cta">
+        <section id="style-finder" className="min-h-screen flex flex-col justify-center py-14 md:py-20 bg-[#1D1D1F] text-white relative overflow-hidden" data-testid="style-finder-cta">
           <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 20% 20%, #fff 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
           <div className="max-w-[1500px] mx-auto px-5 md:px-8 relative">
             <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
@@ -87,10 +118,12 @@ export default function Home() {
           </div>
         </section>
       </Reveal>
+      </div>
 
       {/* SERVICES */}
+      <div data-stack style={{ position: "relative", zIndex: 2, borderRadius: "1.25rem 1.25rem 0 0", overflow: "hidden" }}>
       <Reveal>
-        <section id="services" className="py-14 md:py-20 bg-white" data-testid="services-section">
+        <section id="services" className="min-h-screen flex flex-col justify-center py-14 md:py-20 bg-white" data-testid="services-section">
           <div className="max-w-[1500px] mx-auto px-5 md:px-8">
             <div className="reveal flex flex-col md:flex-row md:items-end md:justify-between gap-3 mb-8">
               <div>
@@ -146,10 +179,12 @@ export default function Home() {
           </div>
         </section>
       </Reveal>
+      </div>
 
       {/* INSTAGRAM FEED */}
+      <div data-stack style={{ position: "relative", zIndex: 3, borderRadius: "1.25rem 1.25rem 0 0", overflow: "hidden" }}>
       <Reveal>
-        <section id="instagram" className="py-14 md:py-20 bg-white" data-testid="instagram-section">
+        <section id="instagram" className="min-h-screen flex flex-col justify-center py-14 md:py-20 bg-white" data-testid="instagram-section">
           <div className="max-w-[1500px] mx-auto px-5 md:px-8">
             <div className="reveal flex flex-col md:flex-row md:items-end md:justify-between gap-3 mb-8">
               <div>
@@ -211,10 +246,12 @@ export default function Home() {
           </div>
         </section>
       </Reveal>
+      </div>
 
       {/* GALLERY */}
+      <div data-stack style={{ position: "relative", zIndex: 4, borderRadius: "1.25rem 1.25rem 0 0", overflow: "hidden" }}>
       <Reveal>
-        <section id="gallery" className="py-10 md:py-14 bg-white" data-testid="gallery-section">
+        <section id="gallery" className="min-h-screen flex flex-col justify-center py-10 md:py-14 bg-white" data-testid="gallery-section">
           <div className="max-w-[1500px] mx-auto px-5 md:px-8">
             <div className="reveal flex flex-col md:flex-row md:items-end md:justify-between gap-3 mb-5">
               <div>
@@ -243,10 +280,12 @@ export default function Home() {
           </div>
         </section>
       </Reveal>
+      </div>
 
       {/* ABOUT */}
+      <div data-stack style={{ position: "relative", zIndex: 5, borderRadius: "1.25rem 1.25rem 0 0", overflow: "hidden" }}>
       <Reveal>
-        <section id="about" className="py-14 md:py-20 bg-gradient-to-b from-gray-50 to-white" data-testid="about-section">
+        <section id="about" className="min-h-screen flex flex-col justify-center py-14 md:py-20 bg-gradient-to-b from-gray-50 to-white" data-testid="about-section">
           <div className="max-w-[1500px] mx-auto px-5 md:px-8 grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12">
             <div className="md:col-span-5 reveal">
               <div className="rounded-xl overflow-hidden">
@@ -292,10 +331,12 @@ export default function Home() {
           </div>
         </section>
       </Reveal>
+      </div>
 
       {/* CONTACT */}
+      <div data-stack style={{ position: "relative", zIndex: 6, borderRadius: "1.25rem 1.25rem 0 0", overflow: "hidden" }}>
       <Reveal>
-        <section id="contact" className="py-14 md:py-20 bg-white" data-testid="contact-section">
+        <section id="contact" className="min-h-screen flex flex-col justify-center py-14 md:py-20 bg-white" data-testid="contact-section">
           <div className="max-w-[1500px] mx-auto px-5 md:px-8">
             <div className="reveal flex flex-col md:flex-row md:items-end md:justify-between gap-3 mb-8">
               <div>
@@ -342,9 +383,11 @@ export default function Home() {
           </div>
         </section>
       </Reveal>
+      </div>
 
       {/* CTA BAND */}
-      <section className="bg-[#1D1D1F] text-white py-16 md:py-24" data-testid="cta-band">
+      <div data-stack style={{ position: "relative", zIndex: 7, borderRadius: "1.25rem 1.25rem 0 0", overflow: "hidden" }}>
+      <section className="min-h-screen flex flex-col justify-center bg-[#1D1D1F] text-white py-16 md:py-24" data-testid="cta-band">
         <div className="max-w-[1500px] mx-auto px-5 md:px-8 text-center">
           <h2 className="title-massive text-5xl md:text-7xl lg:text-8xl leading-tight mt-3 text-white">Book the chair.</h2>
           <p className="mt-4 text-white/45 text-sm md:text-base max-w-md mx-auto">By appointment only. No walk-ins.</p>
@@ -357,6 +400,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+      </div>
 
 </div>{/* /site-body curtain */}
     </>
@@ -411,13 +455,12 @@ const FRAME_COUNT = 65;
 const FRAME_URL = (i) =>
   `${process.env.PUBLIC_URL}/frames/ezgif-frame-${String(i + 1).padStart(3, "0")}.png`;
 
-function HeroSection({ services, barbers, openBooking }) {
+function HeroSection({ services, barbers, openBooking, onReady }) {
   void services; void barbers;
 
   const sectionRef  = useRef(null);
   const canvasRef   = useRef(null);
   const framesRef   = useRef([]);     // pre-loaded Image objects
-  const cornerLRef  = useRef(null);
   const cornerRRef  = useRef(null);
   const wordLRef    = useRef(null);
   const wordRRef    = useRef(null);
@@ -568,7 +611,6 @@ function HeroSection({ services, barbers, openBooking }) {
       // 0 → 15 %: wordmark splits outward + fades, corners/subtitle/bottom exit
       tl.to(wordLRef.current,    { xPercent: -150, opacity: 0, ease: "none", duration: TEXT_EXIT_AT }, 0)
         .to(wordRRef.current,    { xPercent:  150, opacity: 0, ease: "none", duration: TEXT_EXIT_AT }, 0)
-        .to(cornerLRef.current,  { x: -140, opacity: 0, ease: "none", duration: TEXT_EXIT_AT }, 0)
         .to(cornerRRef.current,  { opacity: 0, ease: "none", duration: 0.06 }, 0)
         .to(subtitleRef.current, { opacity: 0, y: 10, ease: "none", duration: TEXT_EXIT_AT }, 0)
         .to(bottomRef.current,   { opacity: 0, y: 32, ease: "none", duration: TEXT_EXIT_AT }, 0)
@@ -591,6 +633,7 @@ function HeroSection({ services, barbers, openBooking }) {
     }, sectionRef);
 
     ScrollTrigger.refresh();
+    onReady?.(); // hero pin + spacer now exist — safe to create the stacking pins
 
     return () => {
       gsap.ticker.remove(tickerFn);
@@ -658,8 +701,8 @@ function HeroSection({ services, barbers, openBooking }) {
           <div style={{ width: "100%" }}>
             <h1
               data-testid="hero-title"
-              className="font-display font-black uppercase text-white text-center select-none"
-              style={{ fontFamily: "'Outfit', sans-serif", fontSize: "clamp(7rem, 28vw, 26rem)", letterSpacing: "-0.045em", lineHeight: 0.82 }}
+              className="font-display font-light uppercase text-white text-center select-none"
+              style={{ fontFamily: "'Outfit', sans-serif", fontSize: "clamp(7rem, 28vw, 26rem)", letterSpacing: "-0.045em", lineHeight: 0.82, fontWeight: 700 }}
             >
               <span ref={wordLRef} style={{ display: "inline-block" }}>TZO</span>
               <span ref={wordRRef} style={{ display: "inline-block" }}>
