@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { ChevronsRight, ArrowUpRight, ArrowRight, Phone, Mail, MapPin, Instagram, Sparkles } from "lucide-react";
-import Ticker from "@/components/Ticker";
 import Reveal from "@/components/Reveal";
 import CountUp from "@/components/CountUp";
 import Magnetic from "@/components/Magnetic";
 import ParallaxImage from "@/components/ParallaxImage";
-import { SHOP_IMAGES, STOCK, MANIFESTO_WORDS, SERVICE_GROUPS } from "@/data/site";
+import { SHOP_IMAGES, STOCK, SERVICE_GROUPS } from "@/data/site";
 import { useBooking } from "@/contexts/BookingContext";
 import BookingModal from "@/components/BookingModal";
 import StyleFinder from "@/components/StyleFinder";
@@ -41,42 +40,11 @@ export default function Home() {
       {/* HERO — Canvas image-sequence scrub (preload-gated, Apple-style) */}
       <HeroSection services={services} barbers={barbers} openBooking={openBooking} />
 
-      {/* SITE BODY — the curtain. z-20 + solid background so it covers the hero,
-          and marginTop:-100vh pulls it up to overlap the LAST screen of the
-          hero's reserved pin track, so it rides up over the still-pinned hero
-          on plain scroll only after the canvas animation has finished. */}
-      <div className="relative z-[20] bg-white" data-testid="site-body" style={{ marginTop: "-100vh" }}>
-      {/* Ticker */}
-      <Ticker words={MANIFESTO_WORDS} theme="blue" />
-
-      {/* MANIFESTO */}
-      <Reveal>
-        <section id="manifesto" className="bg-[#F5F5F7] py-14 md:py-20 border-y border-black/[0.05]">
-          <div className="max-w-[1500px] mx-auto px-5 md:px-8 grid grid-cols-1 md:grid-cols-12 gap-8">
-            <div className="md:col-span-4 reveal flex flex-col justify-center gap-8 pt-2">
-              {[
-                { num: "2019", label: "Est. Athens" },
-                { num: "4.8★", label: "90+ Reviews" },
-                { num: "No.526", label: "Leoforos Irakleiou" },
-              ].map((s) => (
-                <div key={s.num} className="border-l-2 border-[#1D1D1F]/10 pl-5">
-                  <div className="font-display font-black text-3xl md:text-4xl text-[#1D1D1F] leading-none">{s.num}</div>
-                  <div className="font-mono text-[0.6rem] uppercase tracking-widest text-[#A1A1A6] mt-1">{s.label}</div>
-                </div>
-              ))}
-            </div>
-            <div className="md:col-span-8 reveal">
-              <h2 className="title-massive text-2xl md:text-4xl lg:text-5xl leading-tight">
-                It's not just a haircut. It's a ritual.
-              </h2>
-              <p className="mt-5 max-w-2xl text-[#86868B] text-sm md:text-base leading-relaxed">
-                At TZOUL BARBER we fuse classic American barbering with the raw aesthetic of modern Athens.
-                Vintage chairs, hot towels, music, culture — all under a wall covered in typography.
-              </p>
-            </div>
-          </div>
-        </section>
-      </Reveal>
+      {/* SITE BODY — the curtain. z-20 + solid background so it covers the hero.
+          marginTop:-300vh pulls site-body up to start overlapping the pin spacer
+          at ~33 % of the 6-screen track (scrollY = 2×vh), fully covering at
+          ~50 % (scrollY = 3×vh) while the canvas animation is still playing. */}
+      <div className="relative z-[20] bg-white" data-testid="site-body" style={{ marginTop: "-300vh" }}>
 
       {/* STYLE FINDER CTA */}
       <Reveal>
@@ -452,6 +420,11 @@ function HeroSection({ services, barbers, openBooking }) {
   const wordRRef    = useRef(null);
   const subtitleRef = useRef(null);
   const bottomRef   = useRef(null);
+  const stat0Ref  = useRef(null);  // "2019"   — slides from left
+  const stat1Ref  = useRef(null);  // "4.8★"  — slides from right
+  const stat2Ref  = useRef(null);  // "No.526" — slides from left
+  const mTitleRef = useRef(null);  // heading  — slides from right
+  const mTextRef  = useRef(null);  // paragraph — slides from left
 
   // Preload state
   const [loaded, setLoaded]   = useState(false);   // all frames decoded?
@@ -496,24 +469,36 @@ function HeroSection({ services, barbers, openBooking }) {
     const section = sectionRef.current;
     if (!canvas || !section) return;
     const ctx = canvas.getContext("2d");
+    // Skip bilinear interpolation — the frames are already high-res so the
+    // browser doesn't need to resample, and turning this off saves GPU time.
+    ctx.imageSmoothingEnabled = false;
+
+    // Cover-math cache — all 65 frames share the same natural dimensions
+    // (1920×1080), so we only need to recompute scale/x/y when the canvas
+    // itself is resized, not on every drawFrame call.
+    let coverScale = 1, coverX = 0, coverY = 0;
 
     // Size the canvas backing store to its CSS box (handles 100vw × 100vh)
     const resizeCanvas = () => {
       canvas.width  = canvas.offsetWidth;
       canvas.height = canvas.offsetHeight;
+      // Recompute cover-math for the new canvas size using the first frame
+      // as the size reference (all frames are identical dimensions).
+      const ref = framesRef.current[0];
+      if (ref && ref.naturalWidth) {
+        coverScale = Math.max(canvas.width / ref.naturalWidth, canvas.height / ref.naturalHeight);
+        coverX = (canvas.width  - ref.naturalWidth  * coverScale) / 2;
+        coverY = (canvas.height - ref.naturalHeight * coverScale) / 2;
+      }
     };
 
-    // Paint one frame using object-fit:cover maths
+    // Paint one frame — cover-math is pre-cached in coverScale/X/Y
     const drawFrame = (rawIndex) => {
       const idx = Math.max(0, Math.min(Math.round(rawIndex), FRAME_COUNT - 1));
       const img = framesRef.current[idx];
       if (!img || !img.complete || !img.naturalWidth) return;
-      const cw = canvas.width, ch = canvas.height;
-      const scale = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
-      const x = (cw - img.naturalWidth  * scale) / 2;
-      const y = (ch - img.naturalHeight * scale) / 2;
-      ctx.clearRect(0, 0, cw, ch);
-      ctx.drawImage(img, x, y, img.naturalWidth * scale, img.naturalHeight * scale);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, coverX, coverY, img.naturalWidth * coverScale, img.naturalHeight * coverScale);
     };
 
     resizeCanvas();
@@ -521,11 +506,38 @@ function HeroSection({ services, barbers, openBooking }) {
     const onResize = () => { resizeCanvas(); drawFrame(frameProxy.value); };
     window.addEventListener("resize", onResize);
 
-    // Proxy object the scrub animates — drives canvas repaint on every tick
+    // Proxy object the scrub animates — only .value changes here; the ticker draws
     const frameProxy = { value: 0 };
+    let lastRendered = -1;
+
+    // Disable GSAP's lag-compensation: when a frame drops, GSAP normally
+    // advances time to "catch up", which causes a sudden jump in the canvas.
+    // With lagSmoothing(0) it simply resumes from where it left off.
+    gsap.ticker.lagSmoothing(0);
+
+    // GSAP Ticker: runs every rAF, draws only when the frame index has changed.
+    // Decoupling draw from onUpdate means the compositor never has to wait for a
+    // canvas paint to finish before the next scroll event is processed.
+    const tickerFn = () => {
+      const idx = Math.round(frameProxy.value);
+      if (idx !== lastRendered) {
+        drawFrame(frameProxy.value);
+        lastRendered = idx;
+      }
+    };
+    gsap.ticker.add(tickerFn);
+
     const TEXT_EXIT_AT   = 0.15; // wordmark fully gone by 15 % of the track
-    const CANVAS_DONE_AT = 0.85; // last frame reached by 85 % of the track,
-                                 // leaving the final 15 % for the curtain.
+    const CANVAS_DONE_AT = 0.65; // last frame reached at 65 % of the track
+    const D = 0.05;              // fade duration per element
+    const G = 0.02;              // hold gap before crossfade starts
+    const S = 0.18;              // sequence start position
+
+    // Set initial state for each manifesto element. Alternating left/right so
+    // they fly in from opposite edges. Use window.innerWidth so they start
+    // fully off-screen. Managed by GSAP (not JSX style props) to survive
+    // React re-renders triggered by API data loading.
+    gsap.set([stat0Ref.current, stat1Ref.current, stat2Ref.current, mTitleRef.current, mTextRef.current], { opacity: 0 });
 
     // Scope all GSAP work to a context so StrictMode's double-mount (and
     // unmount) can fully REVERT the pin-spacer + inline styles. Killing a
@@ -541,10 +553,10 @@ function HeroSection({ services, barbers, openBooking }) {
         scrollTrigger: {
           trigger:             section,
           start:               "top top",
-          end:                 () => "+=" + (window.innerHeight * 12),
+          end:                 () => "+=" + (window.innerHeight * 6),
           pin:                 true,
           pinSpacing:          true,
-          scrub:               1,
+          scrub:               2, // enough damping to absorb browser hiccups smoothly
           invalidateOnRefresh: true,
           onRefresh:           () => { resizeCanvas(); drawFrame(frameProxy.value); },
         },
@@ -557,16 +569,28 @@ function HeroSection({ services, barbers, openBooking }) {
         .to(cornerRRef.current,  { x:  140, opacity: 0, ease: "none", duration: TEXT_EXIT_AT }, 0)
         .to(subtitleRef.current, { opacity: 0, y: 10, ease: "none", duration: TEXT_EXIT_AT }, 0)
         .to(bottomRef.current,   { opacity: 0, y: 32, ease: "none", duration: TEXT_EXIT_AT }, 0)
-        // 0 → 85 %: canvas frame sequence scrubs to the last frame
-        .to(frameProxy, { value: FRAME_COUNT - 1, ease: "none", duration: CANVAS_DONE_AT,
-                          onUpdate: () => drawFrame(frameProxy.value) }, 0)
-        // 85 → 100 %: hold the last frame while Section 2 curtains up over it
+        // 0 → 65 %: scrub only updates frameProxy.value — ticker handles the draw
+        .to(frameProxy, { value: FRAME_COUNT - 1, ease: "none", duration: CANVAS_DONE_AT }, 0)
+        // Crossfade sequence: each element fades out as the next fades in.
+        // title in → crossfade to text → crossfade to stat0 → stat1 → stat2 → out
+        .fromTo(mTitleRef.current, { opacity: 0 }, { opacity: 1, ease: "none", duration: D }, S)
+        .to(mTitleRef.current,     { opacity: 0, ease: "none", duration: D }, S + D + G)
+        .fromTo(mTextRef.current,  { opacity: 0 }, { opacity: 1, ease: "none", duration: D }, S + D + G)
+        .to(mTextRef.current,      { opacity: 0, ease: "none", duration: D }, S + D*2 + G*2)
+        .fromTo(stat0Ref.current,  { opacity: 0 }, { opacity: 1, ease: "none", duration: D }, S + D*2 + G*2)
+        .to(stat0Ref.current,      { opacity: 0, ease: "none", duration: D }, S + D*3 + G*3)
+        .fromTo(stat1Ref.current,  { opacity: 0 }, { opacity: 1, ease: "none", duration: D }, S + D*3 + G*3)
+        .to(stat1Ref.current,      { opacity: 0, ease: "none", duration: D }, S + D*4 + G*4)
+        .fromTo(stat2Ref.current,  { opacity: 0 }, { opacity: 1, ease: "none", duration: D }, S + D*4 + G*4)
+        .to(stat2Ref.current,      { opacity: 0, ease: "none", duration: D }, S + D*5 + G*5)
+        // 65 → 100 %: hold last frame while curtain rises
         .to({}, { duration: 1 - CANVAS_DONE_AT });
     }, sectionRef);
 
     ScrollTrigger.refresh();
 
     return () => {
+      gsap.ticker.remove(tickerFn);
       window.removeEventListener("resize", onResize);
       gsapCtx.revert();
     };
@@ -586,7 +610,7 @@ function HeroSection({ services, barbers, openBooking }) {
       {/* Canvas — image sequence painted here; covers section like object-fit:cover */}
       <canvas
         ref={canvasRef}
-        style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover", zIndex: 1 }}
+        style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover", zIndex: 1, willChange: "contents", transform: "translateZ(0)" }}
       />
 
       {/* Dim overlay */}
@@ -675,6 +699,42 @@ function HeroSection({ services, barbers, openBooking }) {
           </div>
         </div>
 
+      </div>
+
+      {/* Manifesto overlay — title/text flush right, stats centered, both vertically centered */}
+      <div style={{ position: "absolute", inset: 0, zIndex: 2, padding: "0 2.5rem", pointerEvents: "none", display: "flex", alignItems: "center" }}>
+        <div style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+
+          {/* Stats — far left, vertically centered */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "1.75rem" }}>
+            <div ref={stat0Ref} style={{ borderLeft: "2px solid rgba(255,255,255,0.2)", paddingLeft: "1.25rem" }}>
+              <div className="font-display font-black text-2xl md:text-3xl text-white leading-none">2019</div>
+              <div className="font-mono uppercase text-white/45 mt-1" style={{ fontSize: "0.58rem", letterSpacing: "0.24em" }}>Est. Athens</div>
+            </div>
+            <div ref={stat1Ref} style={{ borderLeft: "2px solid rgba(255,255,255,0.2)", paddingLeft: "1.25rem" }}>
+              <div className="font-display font-black text-2xl md:text-3xl text-white leading-none">4.8★</div>
+              <div className="font-mono uppercase text-white/45 mt-1" style={{ fontSize: "0.58rem", letterSpacing: "0.24em" }}>90+ Reviews</div>
+            </div>
+            <div ref={stat2Ref} style={{ borderLeft: "2px solid rgba(255,255,255,0.2)", paddingLeft: "1.25rem" }}>
+              <div className="font-display font-black text-2xl md:text-3xl text-white leading-none">No.526</div>
+              <div className="font-mono uppercase text-white/45 mt-1" style={{ fontSize: "0.58rem", letterSpacing: "0.24em" }}>Leoforos Irakleiou</div>
+            </div>
+          </div>
+
+          {/* Title + text — far right, vertically centered, right-aligned */}
+          <div style={{ maxWidth: "24rem", textAlign: "right" }}>
+            <h2 ref={mTitleRef} className="font-display font-black uppercase text-white leading-tight"
+              style={{ fontSize: "clamp(1.4rem, 3vw, 2.8rem)", letterSpacing: "-0.03em" }}>
+              It's not just a haircut.<br />It's a ritual.
+            </h2>
+            <p ref={mTextRef} className="mt-3 text-white/55 leading-relaxed"
+              style={{ fontSize: "clamp(0.78rem, 1.1vw, 0.95rem)" }}>
+              At TZOUL BARBER we fuse classic American barbering with the raw aesthetic of modern Athens.
+              Vintage chairs, hot towels, music, culture — all under a wall covered in typography.
+            </p>
+          </div>
+
+        </div>
       </div>
     </section>
     </div>
