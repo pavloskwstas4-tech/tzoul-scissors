@@ -37,10 +37,15 @@ export default function Home() {
     <>
       <BookingModal />
       <StyleFinder open={styleFinderOpen} onClose={() => setStyleFinderOpen(false)} />
-      
-      {/* HERO — Split layout: editorial left + sharp photo right, red marquee below */}
+
+      {/* HERO — Canvas image-sequence scrub (preload-gated, Apple-style) */}
       <HeroSection services={services} barbers={barbers} openBooking={openBooking} />
 
+      {/* SITE BODY — the curtain. z-20 + solid background so it covers the hero,
+          and marginTop:-100vh pulls it up to overlap the LAST screen of the
+          hero's reserved pin track, so it rides up over the still-pinned hero
+          on plain scroll only after the canvas animation has finished. */}
+      <div className="relative z-[20] bg-white" data-testid="site-body" style={{ marginTop: "-100vh" }}>
       {/* Ticker */}
       <Ticker words={MANIFESTO_WORDS} theme="blue" />
 
@@ -382,6 +387,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+      </div>{/* /site-body curtain */}
     </>
   );
 }
@@ -407,35 +413,38 @@ function ContactCard({ icon, label, value, href, testid }) {
 
 
 /* ---------------------------------------------------------------------------
- * HeroSection — Canvas image-sequence scrub (Apple-style).
- * Browser paints pre-loaded JPEG frames onto a canvas on every scroll tick.
- * Zero video-decoder latency → buttery-smooth at any scrub speed.
+ * HeroSection — High-performance canvas image-sequence scrub (Apple-style).
  *
- * ── HOW TO PREPARE YOUR FRAMES ──────────────────────────────────────────
+ * Pipeline:
+ *   1. Preload ALL frames into memory via new Image() + onload, gated behind a
+ *      "Loading Experience…" overlay. Page scroll is locked until 100 % loaded.
+ *   2. Only after every frame is decoded do we draw frame 0 and init GSAP +
+ *      ScrollTrigger. This guarantees zero decode-stutter during the scrub.
+ *   3. A pinned, scrubbed master timeline (12-screen track, pinSpacing:true)
+ *      drives a proxy { value } 0 → lastFrame over the first 85 % of the track.
+ *      Each onUpdate clears the canvas and paints the frame (object-fit:cover).
+ *   4. The "TZO"/"UL" wordmark splits outward + fades during the first ~15 %
+ *      of the track; the last frame then holds for the final 15 %.
+ *   5. CURTAIN: the hero stays pinned (z-1) for the whole track. Section 2
+ *      (z-20, solid bg) has marginTop:-100vh so it overlaps the final screen
+ *      of the reserved track and rides UP over the still-pinned hero on plain
+ *      scroll — covering a finished animation, not interrupting it.
  *
- *  Step 1 — Extract frames with FFmpeg (run on your machine):
- *
- *    ffmpeg -i your_video.mp4 \
- *      -vf "fps=30,scale=1920:-2" \
- *      -q:v 2 \
- *      frame_%03d.jpg
- *
- *    Flags:
- *      fps=30          → 30 frames per second (3 s clip = 90 frames)
- *      scale=1920:-2   → resize to 1920 px wide, keep aspect ratio
- *      -q:v 2          → JPEG quality (1 = best, 4 = good balance)
- *      frame_%03d.jpg  → output: frame_001.jpg … frame_090.jpg
- *
- *  Step 2 — Upload the frames to your CDN / assets bucket.
- *
- *  Step 3 — Update FRAME_COUNT and FRAME_URL below to match.
- *
- * ────────────────────────────────────────────────────────────────────── */
+ * ── FRAME ASSETS ────────────────────────────────────────────────────────────
+ *   Files live in /public/frames/ezgif-frame-001.png … ezgif-frame-065.png and
+ *   are served statically. Update FRAME_COUNT / FRAME_URL if you re-export.
+ *   NOTE: these are 1920×1080 PNGs (~47 MB total). For production, re-encode to
+ *   JPEG q≈2 to cut the preload payload to ~6–8 MB.
+ * ────────────────────────────────────────────────────────────────────────── */
+const FRAME_COUNT = 65;
+const FRAME_URL = (i) =>
+  `${process.env.PUBLIC_URL}/frames/ezgif-frame-${String(i + 1).padStart(3, "0")}.png`;
+
 function HeroSection({ services, barbers, openBooking }) {
   void services; void barbers;
 
   const sectionRef  = useRef(null);
-  const canvasRef   = useRef(null);   // canvas replaces <video>
+  const canvasRef   = useRef(null);
   const framesRef   = useRef([]);     // pre-loaded Image objects
   const cornerLRef  = useRef(null);
   const cornerRRef  = useRef(null);
@@ -444,28 +453,57 @@ function HeroSection({ services, barbers, openBooking }) {
   const subtitleRef = useRef(null);
   const bottomRef   = useRef(null);
 
+  // Preload state
+  const [loaded, setLoaded]   = useState(false);   // all frames decoded?
+  const [progress, setProgress] = useState(0);     // 0..100 for the loader
+
+  // ── 1. PRELOAD ALL FRAMES (gate everything behind this) ──────────────────
   useEffect(() => {
+    let cancelled = false;
+    let done = 0;
+    const frames = new Array(FRAME_COUNT);
+    framesRef.current = frames;
+
+    const onOne = () => {
+      if (cancelled) return;
+      done += 1;
+      setProgress(Math.round((done / FRAME_COUNT) * 100));
+      if (done === FRAME_COUNT) setLoaded(true);
+    };
+
+    for (let i = 0; i < FRAME_COUNT; i++) {
+      const img = new Image();
+      img.onload = onOne;
+      img.onerror = onOne; // don't deadlock the gate on a single bad frame
+      img.src = FRAME_URL(i);
+      frames[i] = img;
+    }
+
+    return () => { cancelled = true; };
+  }, []);
+
+  // ── 2. Lock body scroll while loading ────────────────────────────────────
+  useEffect(() => {
+    document.body.style.overflow = loaded ? "" : "hidden";
+    return () => { document.body.style.overflow = ""; };
+  }, [loaded]);
+
+  // ── 3. Once loaded: draw frame 0 + init GSAP ScrollTrigger ───────────────
+  useEffect(() => {
+    if (!loaded) return;
+
     const canvas  = canvasRef.current;
     const section = sectionRef.current;
-    const ctx     = canvas.getContext('2d');
+    if (!canvas || !section) return;
+    const ctx = canvas.getContext("2d");
 
-    // ── CONFIGURE THESE TO MATCH YOUR EXPORTED FRAMES ───────────────────
-    // FRAME_COUNT : total number of JPEG frames you exported
-    // FRAME_URL   : function that returns the URL for frame i (0-indexed)
-    const FRAME_COUNT = 90;
-    const FRAME_URL   = (i) =>
-      `https://customer-assets.emergentagent.com/job_tzoul-build-1/artifacts/frames/frame_${String(i + 1).padStart(3, "0")}.jpg`;
-    // ────────────────────────────────────────────────────────────────────
-
-    // Size canvas pixels to match its CSS size (100 vw × 100 vh)
+    // Size the canvas backing store to its CSS box (handles 100vw × 100vh)
     const resizeCanvas = () => {
       canvas.width  = canvas.offsetWidth;
       canvas.height = canvas.offsetHeight;
     };
-    resizeCanvas();
-    window.addEventListener("resize", resizeCanvas);
 
-    // Draw one frame with object-fit:cover maths
+    // Paint one frame using object-fit:cover maths
     const drawFrame = (rawIndex) => {
       const idx = Math.max(0, Math.min(Math.round(rawIndex), FRAME_COUNT - 1));
       const img = framesRef.current[idx];
@@ -478,66 +516,102 @@ function HeroSection({ services, barbers, openBooking }) {
       ctx.drawImage(img, x, y, img.naturalWidth * scale, img.naturalHeight * scale);
     };
 
-    // Pre-load every frame — browser caches them in RAM for instant access
-    const frames = new Array(FRAME_COUNT).fill(null);
-    framesRef.current = frames;
-    for (let i = 0; i < FRAME_COUNT; i++) {
-      const img  = new Image();
-      img.src    = FRAME_URL(i);
-      img.onload = () => {
-        frames[i] = img;
-        if (i === 0) drawFrame(0); // show first frame as soon as it arrives
-      };
-      frames[i] = img;
-    }
+    resizeCanvas();
+    drawFrame(0);                       // first frame visible immediately
+    const onResize = () => { resizeCanvas(); drawFrame(frameProxy.value); };
+    window.addEventListener("resize", onResize);
 
-    // Text exit timeline (paused; GSAP scrub drives it via onUpdate)
-    const textTl = gsap.timeline({ paused: true })
-      .to(wordLRef.current,    { xPercent: -150, opacity: 0, ease: "none" }, 0)
-      .to(wordRRef.current,    { xPercent:  150, opacity: 0, ease: "none" }, 0)
-      .to(cornerLRef.current,  { x: -140,  opacity: 0, ease: "none" }, 0)
-      .to(cornerRRef.current,  { x:  140,  opacity: 0, ease: "none" }, 0)
-      .to(subtitleRef.current, { opacity: 0, y: 10, ease: "none" }, 0)
-      .to(bottomRef.current,   { opacity: 0, y: 32, ease: "none" }, 0);
+    // Proxy object the scrub animates — drives canvas repaint on every tick
+    const frameProxy = { value: 0 };
+    const TEXT_EXIT_AT   = 0.15; // wordmark fully gone by 15 % of the track
+    const CANVAS_DONE_AT = 0.85; // last frame reached by 85 % of the track,
+                                 // leaving the final 15 % for the curtain.
 
-    ScrollTrigger.create({
-      trigger:             section,
-      start:               "top top",
-      end:                 () => `+=${window.innerHeight * 12}`,
-      pin:                 true,
-      pinSpacing:          true,
-      anticipatePin:       1,
-      scrub:               2.5,   // inertia smoothing — all easing done here
-      invalidateOnRefresh: true,
-      onUpdate(self) {
-        // self.progress is already smooth (scrub: 2.5) — draw directly, no inner tween
-        drawFrame(self.progress * (FRAME_COUNT - 1));
-        // Text exits in first 15 % of scroll
-        textTl.progress(Math.min(self.progress / 0.15, 1));
-      },
-    });
+    // Scope all GSAP work to a context so StrictMode's double-mount (and
+    // unmount) can fully REVERT the pin-spacer + inline styles. Killing a
+    // pinned ScrollTrigger without reverting leaves a stale 0-height spacer,
+    // which collapses the canvas on the second mount.
+    const gsapCtx = gsap.context(() => {
+      // One scrubbed master timeline pinned over a 12-screen cinematic track.
+      // pinSpacing:true RESERVES that whole track so the canvas + text play out
+      // fully BEFORE anything covers the hero. Section 2 then rides up over the
+      // still-pinned hero on plain scroll (its -100vh margin overlaps the final
+      // screen — see the JSX) so the curtain lands on a finished animation.
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger:             section,
+          start:               "top top",
+          end:                 () => "+=" + (window.innerHeight * 12),
+          pin:                 true,
+          pinSpacing:          true,
+          scrub:               1,
+          invalidateOnRefresh: true,
+          onRefresh:           () => { resizeCanvas(); drawFrame(frameProxy.value); },
+        },
+      });
+
+      // 0 → 15 %: wordmark splits outward + fades, corners/subtitle/bottom exit
+      tl.to(wordLRef.current,    { xPercent: -150, opacity: 0, ease: "none", duration: TEXT_EXIT_AT }, 0)
+        .to(wordRRef.current,    { xPercent:  150, opacity: 0, ease: "none", duration: TEXT_EXIT_AT }, 0)
+        .to(cornerLRef.current,  { x: -140, opacity: 0, ease: "none", duration: TEXT_EXIT_AT }, 0)
+        .to(cornerRRef.current,  { x:  140, opacity: 0, ease: "none", duration: TEXT_EXIT_AT }, 0)
+        .to(subtitleRef.current, { opacity: 0, y: 10, ease: "none", duration: TEXT_EXIT_AT }, 0)
+        .to(bottomRef.current,   { opacity: 0, y: 32, ease: "none", duration: TEXT_EXIT_AT }, 0)
+        // 0 → 85 %: canvas frame sequence scrubs to the last frame
+        .to(frameProxy, { value: FRAME_COUNT - 1, ease: "none", duration: CANVAS_DONE_AT,
+                          onUpdate: () => drawFrame(frameProxy.value) }, 0)
+        // 85 → 100 %: hold the last frame while Section 2 curtains up over it
+        .to({}, { duration: 1 - CANVAS_DONE_AT });
+    }, sectionRef);
+
+    ScrollTrigger.refresh();
 
     return () => {
-      window.removeEventListener("resize", resizeCanvas);
-      ScrollTrigger.getAll().forEach(t => t.kill());
+      window.removeEventListener("resize", onResize);
+      gsapCtx.revert();
     };
-  }, []);
+  }, [loaded]);
 
   return (
+    // Holder only cancels the 64px sticky <Nav> above us (negative margin) so the
+    // scrub starts on the very first pixel. It carries no fixed height — GSAP's
+    // pinSpacing:true spacer (≈13 screens) lives inside it and reserves the track.
+    <div style={{ position: "relative", zIndex: 1, marginTop: "-4rem" }}>
     <section
       ref={sectionRef}
       id="hero"
       data-testid="hero"
-      style={{ position: "relative", zIndex: 10, width: "100%", height: "100vh", overflow: "hidden", background: "#000" }}
+      style={{ position: "relative", zIndex: 1, width: "100%", height: "100vh", overflow: "hidden", background: "#000" }}
     >
       {/* Canvas — image sequence painted here; covers section like object-fit:cover */}
       <canvas
         ref={canvasRef}
-        style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", zIndex: 1 }}
+        style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover", zIndex: 1 }}
       />
 
       {/* Dim overlay */}
       <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.55)", zIndex: 1 }} />
+
+      {/* ── LOADING OVERLAY — solid black, blocks interaction until frames ready ── */}
+      {!loaded && (
+        <div
+          data-testid="hero-loader"
+          style={{
+            position: "absolute", inset: 0, zIndex: 5, background: "#000",
+            display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "1.5rem",
+          }}
+        >
+          <div className="font-mono uppercase text-white/70" style={{ fontSize: "0.7rem", letterSpacing: "0.42em" }}>
+            Loading Experience…
+          </div>
+          <div style={{ width: "min(60vw, 240px)", height: "2px", background: "rgba(255,255,255,0.12)", overflow: "hidden" }}>
+            <div style={{ width: `${progress}%`, height: "100%", background: "#fff", transition: "width 0.2s ease" }} />
+          </div>
+          <div className="font-mono text-white/40" style={{ fontSize: "0.62rem", letterSpacing: "0.2em" }}>
+            {progress}%
+          </div>
+        </div>
+      )}
 
       {/* Content overlay — single absolute container, flex-column inside */}
       <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", zIndex: 2, display: "flex", flexDirection: "column" }}>
@@ -603,5 +677,6 @@ function HeroSection({ services, barbers, openBooking }) {
 
       </div>
     </section>
+    </div>
   );
 }
