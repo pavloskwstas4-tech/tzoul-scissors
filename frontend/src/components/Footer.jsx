@@ -59,7 +59,7 @@ export default function Footer() {
 
         <div className="mt-8 pt-4 border-t border-white/30 relative flex flex-col md:flex-row items-center justify-between gap-3 font-mono text-[0.62rem] uppercase tracking-wider text-white/80">
           <span>© {new Date().getFullYear()} TZOUL BARBER. All rights reserved.</span>
-          <span className="md:absolute md:left-1/2 md:-translate-x-1/2">Made by Konidas</span>
+          <span className="md:absolute md:left-1/2 md:-translate-x-1/2">Made by Pavlos Konidas</span>
           <span>Athens · Greece</span>
         </div>
       </div>
