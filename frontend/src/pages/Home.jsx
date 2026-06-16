@@ -250,7 +250,7 @@ export default function Home() {
           <div className="max-w-[1500px] mx-auto px-5 md:px-8 grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12">
             <div className="md:col-span-5 reveal">
               <div className="rounded-xl overflow-hidden">
-                <ParallaxImage src={SHOP_IMAGES.interior2} alt="Inside TZOUL BARBER" label="Est. 2019" height={520} />
+                <ParallaxImage src={SHOP_IMAGES.interior2} alt="Inside TZOUL BARBER" label="****** ****" height={520} />
               </div>
             </div>
 
@@ -262,24 +262,24 @@ export default function Home() {
               <div>
                 <h3 className="title-massive text-xl md:text-3xl mt-1">Beyond the chair.</h3>
                 <p className="mt-3 text-sm md:text-base text-[#86868B] max-w-2xl leading-relaxed">
-                  TZOUL BARBER was born from a love for traditional barbering and music.
-                  Records on the wall, hip-hop in the air, references to Athenian street art — every corner tells a story.
+                  ***** ******* *** **** **** * **** *** ********** ********* *** *****.
+                  ******* ** *** ****, ******** ** *** ***, ********** ** ******** ****** *** — ***** ****** ***** * *****.
                 </p>
               </div>
 
               <div>
                 <h3 className="title-massive text-xl md:text-3xl mt-1">The Philosophy.</h3>
                 <p className="mt-3 text-sm md:text-base text-gray-600 max-w-2xl leading-relaxed">
-                  Curated products, vintage Belmont and Takara chairs, hot towels, straight razor. No rushing.
-                  Every client leaves transformed.
+                  ******* ********, ******* ******* *** ****** ******, *** ******, ******** *****. ** *******.
+                  ***** ****** ****** **********.
                 </p>
 
                 <div className="mt-6 grid grid-cols-2 gap-4 max-w-2xl">
                   {[
-                    { k: "Tradition", v: "Straight razor, hot towel." },
-                    { k: "Modern",    v: "Contemporary fades & styling." },
-                    { k: "Culture",   v: "Music, art, street." },
-                    { k: "Products",  v: "Curated. Premium." },
+                    { k: "Tradition", v: "******* *****, *** *****." },
+                    { k: "Modern",    v: "************ ***** & ********." },
+                    { k: "Culture",   v: "*****, ***, ******." },
+                    { k: "Products",  v: "*******. *******." },
                   ].map((p) => (
                     <div key={p.k} className="p-4 bg-white rounded-2xl border border-black/[0.05] shadow-[0_2px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.08)] hover:-translate-y-0.5 transition-all">
                       <div className="font-display uppercase text-sm md:text-base">{p.k}</div>

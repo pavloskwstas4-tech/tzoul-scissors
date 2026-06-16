@@ -13,7 +13,7 @@ export const STOCK = {
   serviceTools:   "https://images.pexels.com/photos/1319459/pexels-photo-1319459.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=900&w=900",
   serviceStyle:   "https://images.pexels.com/photos/5824206/pexels-photo-5824206.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=900&w=900",
   beardCloseup:   "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=1100&q=85&auto=format&fit=crop",
-  razor:          "https://images.unsplash.com/photo-1599351431613-18ef1fdd27e3?w=1100&q=85&auto=format&fit=crop",
+  razor:          "https://images.pexels.com/photos/1453005/pexels-photo-1453005.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=900&w=900",
   barberAction:   "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=1100&q=85&auto=format&fit=crop",
   fadeBack:       "https://images.unsplash.com/photo-1622288432450-277d0fef5ed6?w=1100&q=85&auto=format&fit=crop",
 };
